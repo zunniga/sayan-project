@@ -20,7 +20,6 @@ interface TestimonialsProps {
   testimonials: Testimonial[];
   title?: string;
   subtitle?: string;
-  bgColor?: 'light' | 'dark';
 }
 
 export function Testimonials({ 
@@ -128,7 +127,7 @@ export function Testimonials({
                   </div>
                   
                   <p className="text-gray-700 dark:text-gray-300 leading-relaxed flex-grow italic font-light">
-                    "{testimonial.comment}"
+                    {testimonial.comment}
                   </p>
                 </motion.div>
               </div>

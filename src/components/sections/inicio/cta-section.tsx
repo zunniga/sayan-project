@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 
@@ -27,35 +26,6 @@ export function CTASection({
   secondaryButtonText = "Conocer más",
   secondaryButtonLink = "/nosotros",
 }: CTASectionProps) {
-  // Definimos posiciones fijas para evitar errores de hidratación
-  // Estas posiciones no cambian en cada renderizado
-  const starPositions = React.useMemo(() => {
-    return {
-      small: Array(40)
-        .fill(0)
-        .map((_, i) => ({
-          cx: 100 + ((i * 23) % 900),
-          cy: 100 + ((i * 17) % 800),
-          r: 1 + (i % 3),
-        })),
-      medium: Array(15)
-        .fill(0)
-        .map((_, i) => ({
-          cx: 150 + ((i * 57) % 800),
-          cy: 200 + ((i * 39) % 700),
-          r: 2 + (i % 3),
-        })),
-      rects: Array(5)
-        .fill(0)
-        .map((_, i) => ({
-          x: 200 + ((i * 150) % 700),
-          y: 300 + ((i * 100) % 600),
-          width: 10 + (i + 1) * 5,
-          height: 10 + (i + 1) * 5,
-          rotate: i * 15,
-        })),
-    };
-  }, []);
   return (
     <section className="relative py-20 md:py-24 overflow-hidden rounded-2xl">
       {/* Fondo con degradado profesional */}

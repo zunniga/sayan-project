@@ -5,17 +5,13 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 
 interface LoadingScreenProps {
-  message?: string;
   progress?: number;
   onComplete?: () => void;
-  duration?: number;
 }
 
 export function LoadingScreen({ 
-  message = 'Cargando...', 
   progress = 0,
   onComplete,
-  duration = 3000
 }: LoadingScreenProps) {
   const [currentProgress, setCurrentProgress] = useState(0);
   const [isComplete, setIsComplete] = useState(false);

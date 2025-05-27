@@ -17,14 +17,12 @@ interface StatsProps {
   stats: StatItem[];
   title?: string;
   subtitle?: string;
-  bgColor?: 'light' | 'dark' | 'gradient';
 }
 
 export function Stats({
   stats,
   title = "CIMADE en cifras",
   subtitle = "Nuestros números hablan de nuestro compromiso con la educación de calidad",
-  bgColor = 'gradient'
 }: StatsProps) {
   const [inView, setInView] = useState(false);
   const [animatedValues, setAnimatedValues] = useState<{ [key: string]: number }>(

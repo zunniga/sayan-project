@@ -24,7 +24,6 @@ interface FeaturedDiplomasProps {
   diplomas: FeaturedDiploma[];
   title?: string;
   subtitle?: string;
-  bgColor?: 'light' | 'dark';
 }
 
 export function FeaturedDiplomas({
@@ -32,7 +31,6 @@ export function FeaturedDiplomas({
   diplomas,
   title = "Diplomados Especializados",
   subtitle = "Programas intensivos para potenciar tu desarrollo profesional en áreas específicas",
-  bgColor = 'dark',
 }: FeaturedDiplomasProps) {
   const container = {
     hidden: { opacity: 0 },

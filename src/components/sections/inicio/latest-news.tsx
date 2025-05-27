@@ -22,7 +22,6 @@ interface LatestNewsProps {
   news: NewsItem[];
   title?: string;
   subtitle?: string;
-  bgColor?: 'light' | 'dark';
 }
 
 export function LatestNews({
@@ -30,7 +29,6 @@ export function LatestNews({
   news,
   title = "Novedades y noticias",
   subtitle = "Mantente al día con nuestras últimas actualizaciones y eventos",
-  bgColor = 'light'
 }: LatestNewsProps) {
   const container = {
     hidden: { opacity: 0 },

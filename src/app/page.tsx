@@ -10,7 +10,6 @@ import { COUNTRY_DETECTION_CONFIG } from '@/config/country-detection';
 export default function Home() {
   const router = useRouter();
   const [loadingProgress, setLoadingProgress] = useState(0);
-  const [loadingMessage, setLoadingMessage] = useState('Inicializando...');
 
   useEffect(() => {
     let isMounted = true;
@@ -20,7 +19,6 @@ export default function Home() {
 
       try {
         // Paso 1: Verificar si ya tenemos una cookie de país
-        setLoadingMessage('Verificando configuración...');
         setLoadingProgress(20);
         
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -28,7 +26,6 @@ export default function Home() {
         const savedCountry = getCountryFromCookie();
         
         if (savedCountry && countries[savedCountry]) {
-          setLoadingMessage('País detectado, redirigiendo...');
           setLoadingProgress(80);
           
           await new Promise(resolve => setTimeout(resolve, 800));
@@ -43,19 +40,16 @@ export default function Home() {
         }
 
         // Paso 2: No hay cookie, detectar país por IP
-        setLoadingMessage('Detectando tu ubicación...');
         setLoadingProgress(40);
         
         await new Promise(resolve => setTimeout(resolve, 800));
 
         // Paso 3: Realizar detección
-        setLoadingMessage('Configurando experiencia personalizada...');
         setLoadingProgress(70);
         
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         // Paso 4: Redirigir a la API de detección
-        setLoadingMessage('Finalizando...');
         setLoadingProgress(90);
         
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -72,7 +66,6 @@ export default function Home() {
         console.error('Error en la detección de país:', error);
         
         if (isMounted) {
-          setLoadingMessage('Redirigiendo al sitio principal...');
           setLoadingProgress(100);
           
           setTimeout(() => {
@@ -93,7 +86,6 @@ export default function Home() {
   return (
     <div className="h-screen w-full overflow-hidden">
       <LoadingScreen 
-        message={loadingMessage}
         progress={loadingProgress}
       />
     </div>

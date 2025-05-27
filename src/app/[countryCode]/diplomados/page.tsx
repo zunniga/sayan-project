@@ -4,8 +4,9 @@ import { countries } from '@/config/countries';
 // Exportamos esta función para generar rutas estáticas
 export { generateStaticParams };
 
-export default function DiplomadosPage({ params }: CountryParams) {
-  const country = countries[params.countryCode];
+export default async function DiplomadosPage({ params }: CountryParams) {
+  const { countryCode } = await params;
+  const country = countries[countryCode];
   return (
     <>
       <div className="flex flex-col items-center text-center my-12">

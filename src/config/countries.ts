@@ -16,7 +16,6 @@ export interface CountryConfig {
     linkedin?: string;
     youtube?: string;
   };
-  // Agrega más propiedades específicas según sea necesario
 }
 
 // Configuración de países disponibles
@@ -51,7 +50,6 @@ export const countries: Record<string, CountryConfig> = {
       instagram: 'https://instagram.com/cimade.colombia',
     }
   },
-  // Aquí puedes agregar más países en el futuro
 };
 
 // Lista de países para el selector

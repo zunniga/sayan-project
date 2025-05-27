@@ -12,7 +12,7 @@ export function generateStaticParams() {
 
 // Creamos un tipo para el objeto de parámetros
 export type CountryParams = {
-  params: {
+  params: Promise<{
     countryCode: string;
-  };
+  }>;
 };
