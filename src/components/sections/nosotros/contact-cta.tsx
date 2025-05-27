@@ -3,15 +3,11 @@
 import { motion } from 'framer-motion';
 import { 
   Phone, 
-  Mail, 
-  MapPin, 
-  Clock,
-  ArrowRight,
+  Mail,
   MessageCircle,
   Calendar,
   Users
 } from 'lucide-react';
-import Link from 'next/link';
 
 interface ContactCTAProps {
   countryCode: string;
