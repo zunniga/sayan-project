@@ -56,7 +56,7 @@ export const teamMembersPE = [
     name: "Dr. Carlos Mendoza",
     position: "Director Académico Perú",
     description: "Doctor en Ciencias Administrativas con 18 años de experiencia en educación superior y desarrollo organizacional.",
-    image: "/images/equipo1.jpg",
+    image: "/peru/team/equipo1.jpg",
     specialties: ["Gestión Estratégica", "Desarrollo Organizacional", "Investigación"],
     email: "c.mendoza@cimade.edu.pe",
     linkedin: "carlos-mendoza-cimade"
@@ -66,7 +66,7 @@ export const teamMembersPE = [
     name: "Mg. Patricia Flores",
     position: "Coordinadora de Innovación Educativa",
     description: "Magíster en Educación Superior, especialista en tecnologías educativas y metodologías innovadoras.",
-    image: "/images/equipo1.jpg",
+    image: "/peru/team/equipo1.jpg",
     specialties: ["Innovación Educativa", "Tecnología", "Metodologías"],
     email: "p.flores@cimade.edu.pe",
     linkedin: "patricia-flores-cimade"
@@ -147,22 +147,22 @@ export const partnershipsPE = [
   {
     name: "Universidad San Marcos",
     type: "Alianza Académica",
-    logo: "/images/partners/unmsm.png"
+    logo: "/peru/partner/ECOMÁS.png"
   },
   {
     name: "TECSUP",
     type: "Colaboración Técnica",
-    logo: "/images/partners/tecsup.png"
+    logo: "/peru/partner/ECOMÁS.png"
   },
   {
     name: "Cámara de Comercio de Lima",
     type: "Vinculación Empresarial",
-    logo: "/images/partners/ccl.png"
+    logo: "/peru/partner/ECOMÁS.png"
   },
   {
     name: "SNI",
     type: "Desarrollo Industrial",
-    logo: "/images/partners/sni.png"
+    logo: "/peru/partner/ECOMÁS.png"
   }
 ];
 

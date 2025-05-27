@@ -56,7 +56,7 @@ export const teamMembersCO = [
     name: "Dr. Andrea Martínez",
     position: "Directora Académica Colombia",
     description: "Doctora en Administración de Empresas con 20 años de experiencia en educación superior y consultoría empresarial.",
-    image: "/images/equipo1.jpg",
+    image: "/colombia/team/equipo1.jpg",
     specialties: ["Estrategia Empresarial", "Liderazgo", "Innovación"],
     email: "a.martinez@cimade.edu.co",
     linkedin: "andrea-martinez-cimade"
@@ -66,7 +66,7 @@ export const teamMembersCO = [
     name: "Mg. Felipe Rodríguez",
     position: "Coordinador Académico",
     description: "Magíster en Gestión del Talento Humano, especialista en metodologías de aprendizaje activo.",
-    image: "/images/equipo1.jpg",
+    image: "/colombia/team/equipo1.jpg",
     specialties: ["Gestión RRHH", "Metodologías Activas", "Evaluación"],
     email: "f.rodriguez@cimade.edu.co",
     linkedin: "felipe-rodriguez-cimade"
@@ -145,22 +145,22 @@ export const partnershipsCO = [
   {
     name: "Universidad Nacional de Colombia",
     type: "Alianza Académica",
-    logo: "/images/partners/unal.png"
+    logo: "/colombia/partner/ECOMÁS.png"
   },
   {
     name: "SENA",
     type: "Colaboración Institucional",
-    logo: "/images/partners/sena.png"
+    logo: "/colombia/partner/ECOMÁS.png"
   },
   {
     name: "Cámara de Comercio de Bogotá",
     type: "Vinculación Empresarial",
-    logo: "/images/partners/ccb.png"
+    logo: "/colombia/partner/ECOMÁS.png"
   },
   {
     name: "ANDI",
     type: "Desarrollo Empresarial",
-    logo: "/images/partners/andi.png"
+    logo: "/colombia/partner/ECOMÁS.png"
   }
 ];
 
