@@ -50,7 +50,7 @@ export function FeaturedDiplomas({
 
   return (
     <section className="py-20">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <motion.h2 
             initial={{ opacity: 0, y: -20 }}
@@ -71,8 +71,10 @@ export function FeaturedDiplomas({
             {subtitle}
           </motion.p>
         </div>
-          <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 gap-8"
+        
+        {/* Grid de diplomados en 3 columnas */}
+        <motion.div 
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           variants={container}
           initial="hidden"
           whileInView="show"
@@ -82,46 +84,52 @@ export function FeaturedDiplomas({
             <motion.div
               key={diploma.id}
               variants={item}
-              className={`group bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-600/20 dark:border-white/10 hover:border-blue-400/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 flex flex-col md:flex-row ${
-                diploma.featured ? 'md:col-span-2 lg:flex-row' : ''
-              }`}
+              className="group bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-600/20 dark:border-white/10 hover:border-blue-400/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 flex flex-col"
             >
-              <div className={`relative ${diploma.featured ? 'h-64 md:w-1/2 md:h-auto' : 'h-48 md:w-1/3 md:h-auto'}`}>
+              {/* Imagen */}
+              <div className="relative h-56 w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
                 <Image
                   src={diploma.image}
                   alt={diploma.title}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="object-contain transition-transform duration-300 group-hover:scale-105 p-2"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
                 {diploma.featured && (
                   <div className="absolute top-4 right-4 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full z-10">
                     Destacado
                   </div>
                 )}
               </div>
-              <div className={`p-6 flex flex-col ${diploma.featured ? 'md:w-1/2' : 'md:w-2/3'}`}>
+
+              {/* Contenido */}
+              <div className="p-6 flex flex-col flex-grow">
                 <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {diploma.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-2">
+                
+                <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3 flex-grow">
                   {diploma.description}
                 </p>
-                <div className="grid grid-cols-2 gap-4 text-sm text-gray-500 dark:text-gray-400 mt-auto mb-6">
+
+                {/* Stats */}
+                <div className="space-y-2 text-sm text-gray-500 dark:text-gray-400 mb-6">
                   <div className="flex items-center">
-                    <Calendar className="h-4 w-4 mr-1" />
+                    <Calendar className="h-4 w-4 mr-2" />
                     <span>Inicia: {diploma.startDate}</span>
                   </div>
                   <div className="flex items-center">
-                    <Clock className="h-4 w-4 mr-1" />
+                    <Clock className="h-4 w-4 mr-2" />
                     <span>{diploma.duration}</span>
                   </div>
-                  <div className="flex items-center col-span-2">
-                    <Award className="h-4 w-4 mr-1" />
+                  <div className="flex items-center">
+                    <Award className="h-4 w-4 mr-2" />
                     <span>Modalidad: {diploma.modality}</span>
                   </div>
                 </div>
-                <div className="flex justify-between items-center mt-2 pt-4 border-t border-white/10 dark:border-white/5">
+
+                {/* Footer */}
+                <div className="flex justify-between items-center pt-4 border-t border-white/10 dark:border-white/5 mt-auto">
                   <span className="font-bold text-xl text-blue-600 dark:text-blue-400">
                     {diploma.price}
                   </span>
@@ -137,7 +145,9 @@ export function FeaturedDiplomas({
             </motion.div>
           ))}
         </motion.div>
-          <div className="text-center mt-16">
+        
+        {/* CTA */}
+        <div className="text-center mt-16">
           <Link 
             href={`/${countryCode}/diplomados`} 
             className="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-4 rounded-xl transition-all duration-300 hover:shadow-lg text-lg group"

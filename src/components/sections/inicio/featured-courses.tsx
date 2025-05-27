@@ -50,7 +50,7 @@ export function FeaturedCourses({
 
   return (
     <section className="py-20">
-      <div className="container mx-auto">
+      <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-16">
           <motion.h2 
@@ -85,29 +85,29 @@ export function FeaturedCourses({
             <motion.div
               key={course.id}
               variants={item}
-              className="group bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-600/20 dark:border-white/10 hover:border-blue-400/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10"
+              className="group bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-2xl overflow-hidden border border-gray-600/20 dark:border-white/10 hover:border-blue-400/50 transition-all duration-300 hover:shadow-xl hover:shadow-blue-500/10 flex flex-col"
             >
               {/* Imagen */}
-              <div className="relative h-48 w-full overflow-hidden">
+              <div className="relative h-56 w-full overflow-hidden bg-gray-100 dark:bg-gray-800">
                 <Image
                   src={course.image}
                   alt={course.title}
                   fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-105"
+                  className="object-contain transition-transform duration-300 group-hover:scale-105 p-2"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                <div className="absolute top-4 right-4 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent" />
+                <div className="absolute top-4 right-4 bg-blue-600 text-white text-xs font-semibold px-3 py-1 rounded-full z-10">
                   {course.category}
                 </div>
               </div>
 
               {/* Contenido */}
-              <div className="p-6">
+              <div className="p-6 flex flex-col flex-grow">
                 <h3 className="font-bold text-xl text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                   {course.title}
                 </h3>
                 
-                <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-2">
+                <p className="text-gray-600 dark:text-gray-300 mb-6 line-clamp-3 flex-grow">
                   {course.description}
                 </p>
 
@@ -128,7 +128,7 @@ export function FeaturedCourses({
                 </div>
 
                 {/* Footer */}
-                <div className="flex justify-between items-center pt-4 border-t border-white/10 dark:border-white/5">
+                <div className="flex justify-between items-center pt-4 border-t border-white/10 dark:border-white/5 mt-auto">
                   <span className="font-bold text-xl text-blue-600 dark:text-blue-400">
                     {course.price}
                   </span>

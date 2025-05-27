@@ -5,51 +5,6 @@ export const heroStatsCO = [
   { number: "95%", label: "Satisfacción estudiantil" }
 ];
 
-export const historyTimelineCO = [
-  {
-    year: "2008",
-    title: "Fundación en Colombia",
-    description: "CIMADE inicia operaciones en Bogotá con el objetivo de brindar educación continua de calidad para profesionales colombianos.",
-    milestone: true
-  },
-  {
-    year: "2010",
-    title: "Primeras certificaciones internacionales",
-    description: "Establecimiento de alianzas con universidades internacionales para ofrecer programas con doble certificación.",
-    milestone: false
-  },
-  {
-    year: "2013",
-    title: "Expansión nacional",
-    description: "Apertura de sedes en Medellín y Cali, consolidando nuestra presencia en las principales ciudades del país.",
-    milestone: true
-  },
-  {
-    year: "2016",
-    title: "Plataforma digital",
-    description: "Lanzamiento de nuestra plataforma de educación virtual, permitiendo el acceso a la educación desde cualquier lugar.",
-    milestone: false
-  },
-  {
-    year: "2019",
-    title: "Reconocimiento ministerial",
-    description: "Obtención del reconocimiento oficial del Ministerio de Educación Nacional de Colombia.",
-    milestone: true
-  },
-  {
-    year: "2022",
-    title: "5,000 graduados",
-    description: "Celebramos la graduación de nuestro estudiante número 5,000, consolidando nuestro impacto en el desarrollo profesional.",
-    milestone: true
-  },
-  {
-    year: "2024",
-    title: "Innovación educativa",
-    description: "Implementación de metodologías de aprendizaje basadas en inteligencia artificial y realidad virtual.",
-    milestone: false
-  }
-];
-
 export const teamMembersCO = [
   {
     id: "director-colombia",

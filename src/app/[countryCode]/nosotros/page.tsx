@@ -5,7 +5,6 @@ import AboutLayout from '@/components/pages/about-layout';
 // Importar datos específicos por país
 import {
   heroStatsCO,
-  historyTimelineCO,
   teamMembersCO,
   certificationsCO,
   recognitionsCO,
@@ -17,7 +16,6 @@ import {
 
 import {
   heroStatsPE,
-  historyTimelinePE,
   teamMembersPE,
   certificationsPE,
   recognitionsPE,
@@ -41,7 +39,6 @@ export default async function NosotrosPage({ params }: CountryParams) {
     if (countryCode === 'pe') {
       return {
         heroStats: heroStatsPE,
-        historyTimeline: historyTimelinePE,
         teamMembers: teamMembersPE,
         certifications: certificationsPE,
         recognitions: recognitionsPE,
@@ -53,7 +50,6 @@ export default async function NosotrosPage({ params }: CountryParams) {
     } else {
       return {
         heroStats: heroStatsCO,
-        historyTimeline: historyTimelineCO,
         teamMembers: teamMembersCO,
         certifications: certificationsCO,
         recognitions: recognitionsCO,
@@ -71,7 +67,6 @@ export default async function NosotrosPage({ params }: CountryParams) {
       countryCode={countryCode}
       countryName={country.name}
       heroStats={data.heroStats}
-      historyTimeline={data.historyTimeline}
       teamMembers={data.teamMembers}
       certifications={data.certifications}
       recognitions={data.recognitions}

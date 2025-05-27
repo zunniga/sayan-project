@@ -5,51 +5,6 @@ export const heroStatsPE = [
   { number: "96%", label: "Satisfacción estudiantil" }
 ];
 
-export const historyTimelinePE = [
-  {
-    year: "2011",
-    title: "Llegada a Perú",
-    description: "CIMADE establece operaciones en Lima con el compromiso de elevar los estándares de la educación profesional en Perú.",
-    milestone: true
-  },
-  {
-    year: "2013",
-    title: "Acreditación SUNEDU",
-    description: "Obtención de licencias y reconocimientos de la Superintendencia Nacional de Educación Superior Universitaria.",
-    milestone: false
-  },
-  {
-    year: "2015",
-    title: "Expansión a provincias",
-    description: "Apertura de sedes en Arequipa y Trujillo, acercando la educación de calidad a más peruanos.",
-    milestone: true
-  },
-  {
-    year: "2017",
-    title: "Campus digital Perú",
-    description: "Lanzamiento de plataforma educativa adaptada a las necesidades del mercado peruano.",
-    milestone: false
-  },
-  {
-    year: "2020",
-    title: "Adaptación pandemia",
-    description: "Transición exitosa a modalidad 100% virtual durante la pandemia, manteniendo la calidad educativa.",
-    milestone: true
-  },
-  {
-    year: "2023",
-    title: "3,500 graduados",
-    description: "Alcanzamos la meta de 3,500 profesionales graduados, impactando positivamente el mercado laboral peruano.",
-    milestone: true
-  },
-  {
-    year: "2024",
-    title: "Tecnología avanzada",
-    description: "Incorporación de realidad aumentada y simuladores empresariales en nuestros programas.",
-    milestone: false
-  }
-];
-
 export const teamMembersPE = [
   {
     id: "director-peru",

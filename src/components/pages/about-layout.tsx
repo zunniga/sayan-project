@@ -2,7 +2,6 @@
 
 import React from "react";
 import { HeroAbout } from "@/components/sections/nosotros/hero-about";
-import { OurHistory } from "@/components/sections/nosotros/our-history";
 import { MissionVisionValues } from "@/components/sections/nosotros/mission-vision-values";
 import { OurTeam } from "@/components/sections/nosotros/our-team";
 import { TeachingMethodology } from "@/components/sections/nosotros/teaching-methodology";
@@ -11,7 +10,6 @@ import { SocialCommitment } from "@/components/sections/nosotros/social-commitme
 import { ContactCTA } from "@/components/sections/nosotros/contact-cta";
 import type {
   HeroStat,
-  HistoryTimelineItem,
   TeamMember,
   Certification,
   Recognition,
@@ -25,7 +23,6 @@ interface AboutLayoutProps {
   countryCode: string;
   countryName: string;
   heroStats: HeroStat[];
-  historyTimeline: HistoryTimelineItem[];
   teamMembers: TeamMember[];
   certifications: Certification[];
   recognitions: Recognition[];
@@ -39,7 +36,6 @@ export default function AboutLayout({
   countryCode,
   countryName,
   heroStats,
-  historyTimeline,
   teamMembers,
   certifications,
   recognitions,
@@ -57,11 +53,6 @@ export default function AboutLayout({
 
       <main className="pt-23 pb-16 px-4">
         <div className="max-w-[1200px] mx-auto space-y-16">
-          {/* Nuestra Historia */}
-          <section>
-            <OurHistory countryName={countryName} timeline={historyTimeline} />
-          </section>
-
           {/* Misión, Visión y Valores */}
           <section>
             <MissionVisionValues countryName={countryName} />

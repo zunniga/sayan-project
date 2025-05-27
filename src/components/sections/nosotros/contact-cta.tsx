@@ -75,27 +75,6 @@ export function ContactCTA({ countryCode }: ContactCTAProps) {
     }
   ];
 
-  const quickActions = [
-    {
-      title: "Solicitar Información",
-      description: "Recibe el brochure completo de nuestros programas",
-      buttonText: "Descargar Brochure",
-      href: "/brochure"
-    },
-    {
-      title: "Proceso de Admisión",
-      description: "Conoce los requisitos y pasos para matricularte",
-      buttonText: "Ver Requisitos",
-      href: "/admisiones"
-    },
-    {
-      title: "Visita Virtual",
-      description: "Recorre nuestras instalaciones desde casa",
-      buttonText: "Tour Virtual",
-      href: "/tour-virtual"
-    }
-  ];
-
   const getColorClasses = (color: string) => {
     const colors = {
       blue: "from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700",
@@ -128,8 +107,9 @@ export function ContactCTA({ countryCode }: ContactCTAProps) {
             <Users className="w-5 h-5 mr-2 text-blue-600 dark:text-blue-400" />
             <span className="font-medium">Más de 5,000 graduados exitosos nos respaldan</span>
           </div>
-        </motion.div>        {/* Contact Methods */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        </motion.div>        
+        {/* Contact Methods */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-5">
           {contactMethods.map((method, index) => (
             <motion.a
               key={index}
@@ -162,103 +142,7 @@ export function ContactCTA({ countryCode }: ContactCTAProps) {
               </div>
             </motion.a>
           ))}
-        </div>        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
-          viewport={{ once: true }}
-          className="bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-2xl p-8 md:p-12 border border-gray-600/20 dark:border-white/10 hover:border-blue-400/50 transition-all duration-300 shadow-lg"
-        >
-          <div className="text-center mb-10">
-            <h3 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Acciones Rápidas
-            </h3>
-            <p className="text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-              Explora nuestras opciones y encuentra la información que necesitas para tomar la mejor decisión.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            {quickActions.map((action, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 + index * 0.1 }}
-                viewport={{ once: true }}
-                whileHover={{ y: -5 }}
-                className="bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg p-6 border border-gray-600/20 dark:border-white/10 hover:bg-white/15 dark:hover:bg-black/30 hover:border-blue-400/50 hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300 group"
-              >
-                <h4 className="text-lg font-semibold text-gray-900 dark:text-white mb-3 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
-                  {action.title}
-                </h4>
-                <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 leading-relaxed">
-                  {action.description}
-                </p>
-                <Link
-                  href={action.href}
-                  className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors duration-300 group"
-                >
-                  {action.buttonText}
-                  <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
-                </Link>
-              </motion.div>
-            ))}
-          </div>          {/* Contact Information */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-gray-200/30 dark:border-gray-600/30">
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.02 }}
-              className="flex items-center p-4 bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg border border-gray-600/20 dark:border-white/10 hover:border-blue-400/50 transition-all duration-300"
-            >
-              <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg mr-3 flex-shrink-0 shadow-lg">
-                <MapPin className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <div className="text-gray-900 dark:text-white font-medium mb-1">Dirección</div>
-                <div className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{contactInfo.address}</div>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.02 }}
-              className="flex items-center p-4 bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg border border-gray-600/20 dark:border-white/10 hover:border-green-400/50 transition-all duration-300"
-            >
-              <div className="p-2 bg-gradient-to-br from-green-500 to-green-600 rounded-lg mr-3 flex-shrink-0 shadow-lg">
-                <Clock className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <div className="text-gray-900 dark:text-white font-medium mb-1">Horarios</div>
-                <div className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{contactInfo.schedule}</div>
-              </div>
-            </motion.div>
-            
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              viewport={{ once: true }}
-              whileHover={{ scale: 1.02 }}
-              className="flex items-center p-4 bg-white/10 dark:bg-black/20 backdrop-blur-sm rounded-lg border border-gray-600/20 dark:border-white/10 hover:border-purple-400/50 transition-all duration-300"
-            >
-              <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg mr-3 flex-shrink-0 shadow-lg">
-                <Phone className="w-5 h-5 text-white" />
-              </div>
-              <div>
-                <div className="text-gray-900 dark:text-white font-medium mb-1">Teléfono</div>
-                <div className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">{contactInfo.phone}</div>
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
+        </div>
       </div>
     </section>
   );

@@ -58,12 +58,13 @@ export default function HomeLayout({
               subtitle="Programas diseñados para potenciar tu desarrollo profesional con metodologías prácticas y aplicadas"
             />
           </section>
-          {/* Testimonials */}
+          {/* Featured Diplomas */}
           <section>
-            <Testimonials
-              testimonials={testimonials}
-              title="Lo que dicen nuestros estudiantes"
-              subtitle="Descubre por qué miles de profesionales confían en CIMADE para su formación especializada"
+            <FeaturedDiplomas
+              countryCode={countryCode}
+              diplomas={featuredDiplomas}
+              title={`Diplomados Especializados en ${countryName}`}
+              subtitle="Programas intensivos para potenciar tu desarrollo profesional en áreas específicas"
             />
           </section>
           {/* Stats */}
@@ -74,13 +75,12 @@ export default function HomeLayout({
               subtitle="Números que reflejan nuestro compromiso con la educación de calidad"
             />
           </section>
-          {/* Featured Diplomas */}
+          {/* Testimonials */}
           <section>
-            <FeaturedDiplomas
-              countryCode={countryCode}
-              diplomas={featuredDiplomas}
-              title={`Diplomados Especializados en ${countryName}`}
-              subtitle="Programas intensivos para potenciar tu desarrollo profesional en áreas específicas"
+            <Testimonials
+              testimonials={testimonials}
+              title="Lo que dicen nuestros estudiantes"
+              subtitle="Descubre por qué miles de profesionales confían en CIMADE para su formación especializada"
             />
           </section>
           {/* Latest News */}
