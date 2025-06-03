@@ -8,41 +8,35 @@ import {
   Calendar,
   Users
 } from 'lucide-react';
+import { countries } from "@/config/countries";
+import { usePathname } from "next/navigation";
 
 interface ContactCTAProps {
   countryCode: string;
 }
 
 export function ContactCTA({ countryCode }: ContactCTAProps) {
-  const getContactInfo = () => {
-    if (countryCode === 'pe') {
-      return {
-        phone: "+51 1 234-5678",
-        email: "info@cimade.edu.pe",
-        address: "Av. Javier Prado Este 123, San Isidro, Lima",
-        whatsapp: "+51 987-654-321",
-        schedule: "Lunes a Viernes: 8:00 AM - 6:00 PM"
-      };
-    } else {
-      return {
-        phone: "+57 1 234-5678", 
-        email: "info@cimade.edu.co",
-        address: "Carrera 11 #123-45, Zona Rosa, Bogotá",
-        whatsapp: "+57 321-654-9876",
-        schedule: "Lunes a Viernes: 8:00 AM - 6:00 PM"
-      };
-    }
-  };
-
-  const contactInfo = getContactInfo();
+  const pathname = usePathname();
+  // Determinar el código de país
+  let currentCountryCode = countryCode;
+  if (!currentCountryCode) {
+    // Si no se proporcionó en las props, detectarlo de la URL
+    const countryFromPath = Object.keys(countries).find((code) =>
+      pathname.includes(`/${code}`)
+     );
+    currentCountryCode = countryFromPath || "pe"; // Perú como valor predeterminado
+  }
+  
+    // Obtener la configuración del país
+  const country = countries[currentCountryCode];
 
   const contactMethods = [
     {
       icon: Phone,
       title: "Llámanos",
       description: "Habla directamente con nuestros asesores académicos",
-      value: contactInfo.phone,
-      action: `tel:${contactInfo.phone}`,
+      value: country.whatsapp,
+      action: `tel:${country.whatsapp}`,
       color: "blue"
     },
     {
@@ -50,15 +44,15 @@ export function ContactCTA({ countryCode }: ContactCTAProps) {
       title: "WhatsApp",
       description: "Respuesta inmediata a tus consultas",
       value: "Chatear ahora",
-      action: `https://wa.me/${contactInfo.whatsapp.replace(/[^0-9]/g, '')}`,
+      action: `https://wa.me/${country.whatsapp}`,
       color: "green"
     },
     {
       icon: Mail,
       title: "Email",
       description: "Información detallada por correo electrónico",
-      value: contactInfo.email,
-      action: `mailto:${contactInfo.email}`,
+      value: country.email,
+      action: `mailto:${country.email}`,
       color: "purple"
     },
     {
