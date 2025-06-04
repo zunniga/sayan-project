@@ -1,9 +1,9 @@
-import { CourseApiResponse } from '@/types/course';
+import { GraduateApiResponse } from '@/types/graduate';
 
 /**
  * Servicio para obtener cursos desde la API de CIMADE
  */
-export async function fetchCourses({
+export async function fetchGraduates({
   countryCode,
   limit = 10,
   offset = 0,
@@ -11,10 +11,10 @@ export async function fetchCourses({
   countryCode: string;
   limit: number;
   offset: number;
-}): Promise<CourseApiResponse> {
+}): Promise<GraduateApiResponse> {
   const baseUrl = process.env.BACKEND_URL || 'http://backunp.auladm.com';
   // Usamos los parámetros dinámicamente en lugar de valores fijos
-  const url = `${baseUrl}/api/v1/pages/course?name=cimade&limit=${limit}&offset=${offset}`;
+  const url = `${baseUrl}/api/v1/pages/graduate?name=cimade&limit=${limit}&offset=${offset}`;
   
   try {
     const response = await fetch(url, {
@@ -29,7 +29,7 @@ export async function fetchCourses({
       throw new Error(`Error fetching courses: ${response.status} ${response.statusText}`);
     }
     
-    const data: CourseApiResponse = await response.json();
+    const data: GraduateApiResponse = await response.json();
     return data;
   } catch (error) {
     console.error('Error fetching courses:', error);

@@ -11,7 +11,6 @@ import {
   partnershipsCO,
   socialProgramsCO,
   sustainabilityInitiativesCO,
-  impactNumbersCO,
 } from '@/mock/nosotros/colombia-data';
 
 import {
@@ -22,7 +21,6 @@ import {
   partnershipsPE,
   socialProgramsPE,
   sustainabilityInitiativesPE,
-  impactNumbersPE,
 } from '@/mock/nosotros/peru-data';
 
 // Exportamos esta función para generar rutas estáticas
@@ -45,7 +43,6 @@ export default async function NosotrosPage({ params }: CountryParams) {
         partnerships: partnershipsPE,
         socialPrograms: socialProgramsPE,
         sustainabilityInitiatives: sustainabilityInitiativesPE,
-        impactNumbers: impactNumbersPE,
       };
     } else {
       return {
@@ -56,7 +53,6 @@ export default async function NosotrosPage({ params }: CountryParams) {
         partnerships: partnershipsCO,
         socialPrograms: socialProgramsCO,
         sustainabilityInitiatives: sustainabilityInitiativesCO,
-        impactNumbers: impactNumbersCO,
       };
     }
   };
@@ -73,7 +69,6 @@ export default async function NosotrosPage({ params }: CountryParams) {
       partnerships={data.partnerships}
       socialPrograms={data.socialPrograms}
       sustainabilityInitiatives={data.sustainabilityInitiatives}
-      impactNumbers={data.impactNumbers}
     />
   );
 }

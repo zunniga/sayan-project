@@ -16,7 +16,6 @@ import type {
   Partnership,
   SocialProgram,
   SustainabilityInitiative,
-  ImpactNumber
 } from '@/types';
 
 interface AboutLayoutProps {
@@ -29,7 +28,6 @@ interface AboutLayoutProps {
   partnerships: Partnership[];
   socialPrograms: SocialProgram[];
   sustainabilityInitiatives: SustainabilityInitiative[];
-  impactNumbers: ImpactNumber[];
 }
 
 export default function AboutLayout({
@@ -42,7 +40,6 @@ export default function AboutLayout({
   partnerships,
   socialPrograms,
   sustainabilityInitiatives,
-  impactNumbers,
 }: AboutLayoutProps) {
   return (
     <>
@@ -55,12 +52,16 @@ export default function AboutLayout({
         <div className="max-w-[1200px] mx-auto space-y-16">
           {/* Misión, Visión y Valores */}
           <section>
-            <MissionVisionValues countryName={countryName} />
+            <MissionVisionValues
+              countryName={countryName} 
+              countryCode={countryCode} 
+            />
           </section>
 
           {/* Nuestro Equipo */}
           <section>
             <OurTeam
+              countryCode={countryCode}
               countryName={countryName}
               teamMembers={teamMembers}
             />
@@ -68,7 +69,7 @@ export default function AboutLayout({
 
           {/* Metodología de Enseñanza */}
           <section>
-            <TeachingMethodology countryCode={countryCode} />
+            <TeachingMethodology countryName={countryName} />
           </section>
 
           {/* Certificaciones y Reconocimientos */}
@@ -86,7 +87,6 @@ export default function AboutLayout({
             <SocialCommitment
               socialPrograms={socialPrograms}
               sustainabilityInitiatives={sustainabilityInitiatives}
-              impactNumbers={impactNumbers}
             />
           </section>
 

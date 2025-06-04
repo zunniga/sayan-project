@@ -84,14 +84,7 @@ export interface SustainabilityInitiative {
   actions: string[];
 }
 
-export interface ImpactNumber {
-  number: string;
-  label: string;
-  iconName: string;
-}
-
 // Re-export other interfaces from components
-export type { FeaturedCourse } from '@/components/sections/inicio/featured-courses';
 export type { Testimonial } from '@/components/sections/inicio/testimonials';
 
 // News and diploma types - updating FeaturedDiploma to match component

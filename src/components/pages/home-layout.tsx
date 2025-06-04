@@ -10,21 +10,21 @@ import { LatestNews } from "@/components/sections/inicio/latest-news";
 import { CTASection } from "@/components/sections/inicio/cta-section";
 import type { 
   HeroSlide, 
-  FeaturedCourse, 
-  Testimonial, 
-  FeaturedDiploma, 
+  Testimonial,
   NewsItem 
 } from '@/types';
+import type { CourseData } from '@/types/course';
+import type { GraduateData } from '@/types/graduate';
 import type { StatItem } from '@/components/sections/inicio/stats';
 
 interface HomeLayoutProps {
   countryCode: string;
   countryName: string;
   heroSlides: HeroSlide[];
-  featuredCourses: FeaturedCourse[];
+  featuredCourses: CourseData[];
   testimonials: Testimonial[];
   stats: StatItem[];
-  featuredDiplomas: FeaturedDiploma[];
+  featuredDiplomas: GraduateData[];
   latestNews: NewsItem[];
   ctaBackgroundImage?: string;
 }
@@ -62,7 +62,7 @@ export default function HomeLayout({
           <section>
             <FeaturedDiplomas
               countryCode={countryCode}
-              diplomas={featuredDiplomas}
+              graduates={featuredDiplomas}
               title={`Diplomados Especializados en ${countryName}`}
               subtitle="Programas intensivos para potenciar tu desarrollo profesional en áreas específicas"
             />
