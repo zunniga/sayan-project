@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { countries, commonRoutes } from "@/config/countries";
 import { Mail, Phone, MapPin, ExternalLink, Heart } from "lucide-react";
+import { SocialIcon } from "@/components/ui/social-icon";
 
 export function Footer({ countryCode = "" }: { countryCode?: string }) {
   const pathname = usePathname();
@@ -157,28 +158,19 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
             </h3>
             
             {country.socialMedia && (
-              <div className="flex gap-4 mb-8">
+              <div className="flex gap-3 mb-8 flex-wrap">
                 {country.socialMedia.facebook && (
                   <a
                     href={country.socialMedia.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center justify-center w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl hover:from-[#1E5AC8] hover:to-[#2C72FF] transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                    className="group flex items-center justify-center w-12 h-12 bg-white dark:bg-gray-800 rounded-xl hover:bg-gradient-to-br from-[#1877F2] to-[#42A5F5] transition-all duration-300 hover:scale-110 hover:shadow-lg border border-gray-200 dark:border-gray-700"  
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-gray-600 dark:text-gray-300 group-hover:text-white transition-colors duration-300"
-                    >
-                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
-                    </svg>
+                    <SocialIcon 
+                      type="facebook" 
+                      size={20} 
+                      className="text-[#1877F2]" 
+                    />
                   </a>
                 )}
                 
@@ -187,24 +179,42 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
                     href={country.socialMedia.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="group flex items-center justify-center w-12 h-12 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 rounded-xl hover:from-[#1E5AC8] hover:to-[#2C72FF] transition-all duration-300 hover:scale-110 hover:shadow-lg"
+                    className="group flex items-center justify-center w-12 h-12 bg-white dark:bg-gray-800 rounded-xl hover:bg-gradient-to-br from-[#E1306C] to-[#FD1D1D] transition-all duration-300 hover:scale-110 hover:shadow-lg border border-gray-200 dark:border-gray-700"  
                   >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="20"
-                      height="20"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-gray-600 dark:text-gray-300 group-hover:text-white transition-colors duration-300"
-                    >
-                      <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                      <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-                    </svg>
+                    <SocialIcon 
+                      type="instagram" 
+                      size={20}
+                    />
+                  </a>
+                )}
+
+                {country.socialMedia.youtube && (
+                  <a
+                    href={country.socialMedia.youtube}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-center w-12 h-12 bg-white dark:bg-gray-800 rounded-xl hover:bg-gradient-to-br from-[#FF0000] to-[#FF0000] transition-all duration-300 hover:scale-110 hover:shadow-lg border border-gray-200 dark:border-gray-700"
+                  >
+                    <SocialIcon 
+                      type="youtube" 
+                      size={20} 
+                      className="text-[#FF0000] group-hover:text-white" 
+                    />
+                  </a>
+                )}
+
+                {country.socialMedia.tiktok && (
+                  <a
+                    href={country.socialMedia.tiktok}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-center w-12 h-12 bg-white dark:bg-gray-800 rounded-xl hover:bg-gradient-to-br from-[#000000] to-[#000000] transition-all duration-300 hover:scale-110 hover:shadow-lg border border-gray-200 dark:border-gray-700"
+                  >
+                    <SocialIcon 
+                      type="tiktok" 
+                      size={20} 
+                      className="text-black group-hover:text-white" 
+                    />
                   </a>
                 )}
               </div>
