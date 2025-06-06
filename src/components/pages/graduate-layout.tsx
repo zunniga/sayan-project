@@ -1,35 +1,34 @@
 import React from 'react';
-import { CoursesWithPagination } from '@/components/sections/cursos/courses-with-pagination';
-import type { CourseData } from '@/types/course';
+import { GraduatesWithPagination } from '@/components/sections/diplomados/graduates-with-pagination';
+import type { GraduateData } from '@/types/graduate';
 
-interface CourseLayoutProps {
+interface GraduateLayoutProps {
   countryCode: string;
   countryName: string;
-  featuredCourses: CourseData[];
+  featuredGraduates: GraduateData[];
   pagination: {
     total: number;
-    page: number;
     limit: number;
     currentPages: number;
   };
 }
 
-export default function CourseLayout({
+export default function GraduateLayout({
   countryCode,
   countryName,
-  featuredCourses,
+  featuredGraduates,
   pagination,
-}: CourseLayoutProps) {
+}: GraduateLayoutProps) {
   return (
     <>
       <main className="pt-23 pb-16 px-4">
         <div className="max-w-[1200px] mx-auto space-y-16">
           <section>
-            {/* Courses Section with Pagination */}
-            <CoursesWithPagination 
+            {/* Graduates Section with Pagination */}
+            <GraduatesWithPagination 
               countryCode={countryCode}
               countryName={countryName}
-              initialCourses={featuredCourses}
+              initialGraduates={featuredGraduates}
               initialPagination={pagination}
             />
           </section>

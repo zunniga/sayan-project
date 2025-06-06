@@ -54,8 +54,6 @@ export default function HomeLayout({
             <FeaturedCourses
               countryCode={countryCode}
               courses={featuredCourses}
-              title={`Cursos Destacados en ${countryName}`}
-              subtitle="Programas diseñados para potenciar tu desarrollo profesional con metodologías prácticas y aplicadas"
             />
           </section>
           {/* Featured Diplomas */}
@@ -63,24 +61,18 @@ export default function HomeLayout({
             <FeaturedDiplomas
               countryCode={countryCode}
               graduates={featuredDiplomas}
-              title={`Diplomados Especializados en ${countryName}`}
-              subtitle="Programas intensivos para potenciar tu desarrollo profesional en áreas específicas"
             />
           </section>
           {/* Stats */}
           <section>
             <Stats
               stats={stats}
-              title={`CIMADE ${countryName} en cifras`}
-              subtitle="Números que reflejan nuestro compromiso con la educación de calidad"
             />
           </section>
           {/* Testimonials */}
           <section>
             <Testimonials
               testimonials={testimonials}
-              title="Lo que dicen nuestros estudiantes"
-              subtitle="Descubre por qué miles de profesionales confían en CIMADE para su formación especializada"
             />
           </section>
           {/* Latest News */}
@@ -88,8 +80,6 @@ export default function HomeLayout({
             <LatestNews
               countryCode={countryCode}
               news={latestNews}
-              title="Últimas noticias y eventos"
-              subtitle="Mantente al día con las novedades de CIMADE"
             />
           </section>
           {/* CTA Section */}
