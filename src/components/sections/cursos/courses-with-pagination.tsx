@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { CourseGrid } from '@/components/ui/course-grid';
+import { CourseSkeleton } from '@/components/ui/skeleton/course-skeleton';
 import { CourseData } from '@/types/course';
 import { fetchCoursesClient } from '@/lib/api/courses-client';
-import { ChevronLeft, ChevronRight, Loader2, MoreHorizontal } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react';
 
 interface CoursesWithPaginationProps {
   countryCode: string;
@@ -167,20 +168,16 @@ export function CoursesWithPagination({
             </div>
           </motion.div>
 
-          {/* Loading State */}
-          {loading && (
-            <div className="flex justify-center items-center py-16">
-              <div className="flex items-center gap-3 bg-white dark:bg-gray-800 px-6 py-4 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-600">
-                <Loader2 className="w-6 h-6 text-blue-600 animate-spin" />
-                <span className="text-gray-700 dark:text-gray-300 font-medium">
-                  Cargando cursos...
-                </span>
-              </div>
-            </div>
-          )}
-
           {/* Courses Grid */}
-          {!loading && (
+          {loading ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <CourseSkeleton count={COURSES_PER_PAGE} />
+            </motion.div>
+          ) : (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}

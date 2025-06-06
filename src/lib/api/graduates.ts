@@ -1,4 +1,4 @@
-import { GraduateApiResponse } from '@/types/graduate';
+import { GraduateApiResponse, GraduateDetailApiResponse } from '@/types/graduate';
 
 /**
  * Servicio para obtener cursos desde la API de CIMADE
@@ -33,6 +33,38 @@ export async function fetchGraduates({
     return data;
   } catch (error) {
     console.error('Error fetching courses:', error);
+    throw error;
+  }
+}
+
+/**
+ * Servicio para obtener el detalle de un diplomado específico
+ */
+export async function fetchGraduateDetail({
+  id,
+}: {
+  id: string;
+}): Promise<GraduateDetailApiResponse> {
+  const baseUrl = process.env.BACKEND_URL || 'http://backunp.auladm.com';
+  const url = `${baseUrl}/api/v1/pages/gradute/${id}?name=cimade`;
+  
+  try {
+    const response = await fetch(url, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+      },
+      next: { revalidate: 3600 },
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Error fetching graduate detail: ${response.status} ${response.statusText}`);
+    }
+    
+    const data: GraduateDetailApiResponse = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching graduate detail:', error);
     throw error;
   }
 }
