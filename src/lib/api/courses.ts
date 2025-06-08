@@ -4,7 +4,7 @@ import { CourseApiResponse, CourseDetailApiResponse } from '@/types/course';
  * Servicio para obtener cursos desde la API de CIMADE
  */
 export async function fetchCourses({
-  countryCode,
+  //countryCode,
   limit = 10,
   offset = 0,
 }: {

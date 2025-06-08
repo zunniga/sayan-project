@@ -4,7 +4,7 @@ import { GraduateApiResponse, GraduateDetailApiResponse } from '@/types/graduate
  * Servicio para obtener cursos desde la API de CIMADE
  */
 export async function fetchGraduates({
-  countryCode,
+  //countryCode,
   limit = 10,
   offset = 0,
 }: {
