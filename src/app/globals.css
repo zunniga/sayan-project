@@ -87,96 +87,114 @@
     min-height: 100vh;
   }
   
-  /* Reforzamos el gradiente para el modo oscuro */
+  /* Gradiente para el modo oscuro con tonos azules de CIMADE */
   :root.dark body, body.dark {
-    background: #000000 !important;
+    background: rgb(10, 10, 20) !important;
     background-image: 
-      radial-gradient(circle at 10% 90%, rgba(64, 180, 255, 0.25) 0%, rgba(0, 0, 0, 0) 50%),
-      radial-gradient(circle at 90% 10%, rgba(150, 60, 255, 0.25) 0%, rgba(0, 0, 0, 0) 50%) !important;
+      /* Círculo superior derecho - azul principal */
+      radial-gradient(circle at 85% 15%, rgba(30, 90, 200, 0.4) 0%, rgba(30, 90, 200, 0.1) 40%, rgba(0, 0, 0, 0) 70%),
+      /* Círculo inferior izquierdo - azul claro */
+      radial-gradient(circle at 15% 85%, rgba(64, 200, 248, 0.3) 0%, rgba(64, 200, 248, 0.08) 40%, rgba(0, 0, 0, 0) 70%),
+      /* Círculo central difuso */
+      radial-gradient(circle at 50% 50%, rgba(44, 114, 255, 0.15) 0%, rgba(0, 0, 0, 0) 60%),
+      /* Gradiente base diagonal */
+      linear-gradient(135deg, rgba(10, 25, 60, 0.6) 0%, rgba(5, 15, 40, 0.4) 50%, rgba(15, 35, 80, 0.3) 100%),
+      /* Overlay sutil para profundidad */
+      linear-gradient(45deg, rgba(30, 90, 200, 0.05) 0%, transparent 50%, rgba(64, 200, 248, 0.05) 100%) !important;
     background-attachment: fixed !important;
+    background-size: 100% 100%, 100% 100%, 120% 120%, 100% 100%, 100% 100% !important;
     color-scheme: dark;
   }
-  
-  /* Aseguramos que el modo claro tenga su fondo correcto */
+
+  /* Gradiente para el modo claro con tonos azules de CIMADE */
   :root:not(.dark) body, body:not(.dark) {
-    background: #ffffff !important;
+    background: rgb(248, 250, 255) !important;
     background-image: 
-      radial-gradient(circle at 10% 90%, rgba(64, 180, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%),
-      radial-gradient(circle at 90% 10%, rgba(150, 60, 255, 0.1) 0%, rgba(255, 255, 255, 0) 50%) !important;
+      /* Círculo superior derecho - azul principal suave */
+      radial-gradient(circle at 85% 15%, rgba(30, 90, 200, 0.12) 0%, rgba(30, 90, 200, 0.04) 40%, rgba(255, 255, 255, 0) 70%),
+      /* Círculo inferior izquierdo - azul claro suave */
+      radial-gradient(circle at 15% 85%, rgba(64, 200, 248, 0.15) 0%, rgba(64, 200, 248, 0.03) 40%, rgba(255, 255, 255, 0) 70%),
+      /* Círculo central muy sutil */
+      radial-gradient(circle at 50% 50%, rgba(44, 114, 255, 0.08) 0%, rgba(255, 255, 255, 0) 60%),
+      /* Gradiente base diagonal claro */
+      linear-gradient(135deg, rgba(235, 245, 255, 0.8) 0%, rgba(245, 250, 255, 0.6) 50%, rgba(240, 248, 255, 0.4) 100%),
+      /* Overlay de brillo sutil */
+      linear-gradient(45deg, rgba(255, 255, 255, 0.3) 0%, transparent 50%, rgba(240, 248, 255, 0.2) 100%) !important;
     background-attachment: fixed !important;
+    background-size: 100% 100%, 100% 100%, 120% 120%, 100% 100%, 100% 100% !important;
     color-scheme: light;
   }
 }
 
 @layer base {
   :root {
-    --background: 270 50% 98%;
-    --foreground: 270 10% 10%;
+    --background: 210 50% 98%;
+    --foreground: 210 10% 10%;
     --card: 0 0% 100%;
-    --card-foreground: 270 10% 10%;
+    --card-foreground: 210 10% 10%;
     --popover: 0 0% 100%;
-    --popover-foreground: 270 10% 10%;
-    --primary: 270 70% 40%;
+    --popover-foreground: 210 10% 10%;
+    --primary: 210 100% 30%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 270 30% 96%;
-    --secondary-foreground: 270 50% 30%;
-    --muted: 270 20% 96%;
-    --muted-foreground: 270 10% 45%;
-    --accent: 320 70% 70%;
-    --accent-foreground: 270 10% 10%;
+    --secondary: 210 30% 96%;
+    --secondary-foreground: 210 70% 30%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 210 10% 45%;
+    --accent: 210 70% 50%;
+    --accent-foreground: 0 0% 98%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-    --border: 270 20% 90%;
-    --input: 270 20% 90%;
-    --ring: 270 50% 40%;
+    --border: 210 20% 90%;
+    --input: 210 20% 90%;
+    --ring: 210 70% 40%;
     --chart-1: 270 70% 50%;
     --chart-2: 320 70% 60%;
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
     --radius: 0.5rem;
-    --sidebar-background: 270 50% 98%;
-    --sidebar-foreground: 270 10% 26%;
-    --sidebar-primary: 270 70% 40%;
+    --sidebar-background: 210 50% 98%;
+    --sidebar-foreground: 210 10% 26%;
+    --sidebar-primary: 210 100% 30%;
     --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 270 30% 96%;
-    --sidebar-accent-foreground: 270 50% 30%;
-    --sidebar-border: 270 20% 91%;
-    --sidebar-ring: 270 70% 60%;
+    --sidebar-accent: 210 30% 96%;
+    --sidebar-accent-foreground: 210 70% 30%;
+    --sidebar-border: 210 20% 91%;
+    --sidebar-ring: 210 70% 40%;
   }
   .dark {
-    --background: 240 30% 3%;
-    --foreground: 240 10% 98%;
-    --card: 240 30% 6%;
-    --card-foreground: 240 10% 98%;
-    --popover: 240 30% 6%;
-    --popover-foreground: 240 10% 98%;
-    --primary: 240 70% 60%;
+    --background: 210 30% 5%;
+    --foreground: 210 10% 98%;
+    --card: 210 30% 8%;
+    --card-foreground: 210 10% 98%;
+    --popover: 210 30% 8%;
+    --popover-foreground: 210 10% 98%;
+    --primary: 210 90% 50%;
     --primary-foreground: 0 0% 98%;
-    --secondary: 240 30% 12%;
-    --secondary-foreground: 240 10% 98%;
-    --muted: 240 30% 12%;
-    --muted-foreground: 240 10% 64%;
-    --accent: 196 80% 55%;
+    --secondary: 210 30% 15%;
+    --secondary-foreground: 210 10% 98%;
+    --muted: 210 30% 15%;
+    --muted-foreground: 210 10% 64%;
+    --accent: 210 80% 60%;
     --accent-foreground: 240 10% 98%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
-    --border: 240 30% 10%;
-    --input: 240 30% 10%;
-    --ring: 196 80% 55%;
-    --chart-1: 240 70% 60%;
-    --chart-2: 196 80% 55%;
+    --border: 210 30% 12%;
+    --input: 210 30% 12%;
+    --ring: 210 80% 55%;
+    --chart-1: 210 70% 60%;
+    --chart-2: 195 80% 55%;
     --chart-3: 30 80% 55%;
     --chart-4: 280 65% 60%;
     --chart-5: 340 75% 55%;
-    --sidebar-background: 270 30% 8%;
-    --sidebar-foreground: 270 10% 96%;
-    --sidebar-primary: 270 70% 60%;
+    --sidebar-background: 210 30% 8%;
+    --sidebar-foreground: 210 10% 96%;
+    --sidebar-primary: 210 80% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 270 30% 16%;
-    --sidebar-accent-foreground: 270 10% 96%;
-    --sidebar-border: 270 30% 16%;
-    --sidebar-ring: 270 70% 60%;
+    --sidebar-accent: 210 30% 16%;
+    --sidebar-accent-foreground: 210 10% 96%;
+    --sidebar-border: 210 30% 16%;
+    --sidebar-ring: 210 80% 50%;
   }
 }
 

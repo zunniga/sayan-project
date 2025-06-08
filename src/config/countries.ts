@@ -15,8 +15,8 @@ export interface CountryConfig {
     twitter?: string;
     linkedin?: string;
     youtube?: string;
+    tiktok?: string;
   };
-  // Agrega más propiedades específicas según sea necesario
 }
 
 // Configuración de países disponibles
@@ -29,11 +29,13 @@ export const countries: Record<string, CountryConfig> = {
     currency: 'PEN',
     phone: '+51',
     address: 'Lima, Perú',
-    email: 'contacto@cimade.edu.pe',
-    whatsapp: '+51987654321',
+    email: 'capacitaciones@cimade.edu.pe',
+    whatsapp: '+51900102090',
     socialMedia: {
-      facebook: 'https://facebook.com/cimade.peru',
-      instagram: 'https://instagram.com/cimade.peru',
+      facebook: 'https://www.facebook.com/CimadeEC',
+      instagram: 'https://www.instagram.com/cimade_ec',
+      youtube: 'https://www.youtube.com/@cimadeec',
+      tiktok: 'https://www.tiktok.com/@consorciocimade',
     }
   },
   co: {
@@ -47,11 +49,12 @@ export const countries: Record<string, CountryConfig> = {
     email: 'contacto@cimade.edu.co',
     whatsapp: '+57987654321',
     socialMedia: {
-      facebook: 'https://facebook.com/cimade.colombia',
-      instagram: 'https://instagram.com/cimade.colombia',
+      facebook: 'https://www.facebook.com/CimadeEC',
+      instagram: 'https://www.instagram.com/cimade_ec',
+      youtube: 'https://www.youtube.com/@cimadeec',
+      tiktok: 'https://www.tiktok.com/@consorciocimade',
     }
   },
-  // Aquí puedes agregar más países en el futuro
 };
 
 // Lista de países para el selector

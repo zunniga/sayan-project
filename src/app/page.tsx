@@ -1,44 +1,93 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { LoadingScreen } from '@/components/ui/loading-screen';
+import { getCountryFromCookie } from '@/lib/api/ipapi';
 import { countries } from '@/config/countries';
+import { COUNTRY_DETECTION_CONFIG } from '@/config/country-detection';
 
 export default function Home() {
   const router = useRouter();
+  const [loadingProgress, setLoadingProgress] = useState(0);
 
   useEffect(() => {
-    const defaultCountry = 'pe';
-    router.push(`/${defaultCountry}`);
-    
-    // Alternativa: se podría implementar una detección de país basada en IP
-    // utilizando una API como ipapi.co, ipstack, etc.
-    /*
-    async function detectCountry() {
+    let isMounted = true;
+
+    async function handleCountryDetection() {
+      if (!isMounted) return;
+
       try {
-        const response = await fetch('https://ipapi.co/json/');
-        const data = await response.json();
-        const countryCode = data.country.toLowerCase();
+        // Paso 1: Verificar si ya tenemos una cookie de país
+        setLoadingProgress(20);
         
-        // Verificar si tenemos el país en nuestras configuraciones
-        if (countries[countryCode]) {
-          router.push(`/${countryCode}`);
-        } else {
-          router.push(`/${defaultCountry}`); // País por defecto si no está soportado
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        const savedCountry = getCountryFromCookie();
+        
+        if (savedCountry && countries[savedCountry]) {
+          setLoadingProgress(80);
+          
+          await new Promise(resolve => setTimeout(resolve, 800));
+          
+          if (isMounted) {
+            setLoadingProgress(100);
+            setTimeout(() => {
+              router.push(`/${savedCountry}`);
+            }, 500);
+          }
+          return;
         }
+
+        // Paso 2: No hay cookie, detectar país por IP
+        setLoadingProgress(40);
+        
+        await new Promise(resolve => setTimeout(resolve, 800));
+
+        // Paso 3: Realizar detección
+        setLoadingProgress(70);
+        
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Paso 4: Redirigir a la API de detección
+        setLoadingProgress(90);
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        if (isMounted) {
+          setLoadingProgress(100);
+          // Usar window.location para forzar la navegación a la API
+          setTimeout(() => {
+            window.location.href = '/api/detect-country';
+          }, 300);
+        }
+
       } catch (error) {
-        console.error('Error detectando país:', error);
-        router.push(`/${defaultCountry}`);
+        console.error('Error en la detección de país:', error);
+        
+        if (isMounted) {
+          setLoadingProgress(100);
+          
+          setTimeout(() => {
+            router.push(`/${COUNTRY_DETECTION_CONFIG.DEFAULT_COUNTRY}`);
+          }, 1000);
+        }
       }
     }
     
-    detectCountry();
-    */
+    handleCountryDetection();
+
+    // Cleanup function
+    return () => {
+      isMounted = false;
+    };
   }, [router]);
 
   return (
-    <div className="flex items-center justify-center min-h-[60vh]">
-      <div className="animate-pulse">Redireccionando...</div>
+    <div className="h-screen w-full overflow-hidden">
+      <LoadingScreen 
+        progress={loadingProgress}
+      />
     </div>
   );
 }
