@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LoadingScreen } from '@/components/ui/loading-screen';
-import { getCountryFromCookie } from '@/lib/api/ipapi';
+import { detectUserCountry, getCountryFromCookie } from '@/lib/api/ipapi';
 import { countries } from '@/config/countries';
 import { COUNTRY_DETECTION_CONFIG } from '@/config/country-detection';
 
@@ -18,66 +18,63 @@ export default function Home() {
       if (!isMounted) return;
 
       try {
-        // Paso 1: Verificar si ya tenemos una cookie de país
+        // Paso 1: Verificar cookie existente
         setLoadingProgress(20);
-        
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, 300));
         
         const savedCountry = getCountryFromCookie();
         
         if (savedCountry && countries[savedCountry]) {
-          setLoadingProgress(80);
-          
-          await new Promise(resolve => setTimeout(resolve, 800));
-          
+          setLoadingProgress(100);
           if (isMounted) {
-            setLoadingProgress(100);
-            setTimeout(() => {
-              router.push(`/${savedCountry}`);
-            }, 500);
+            router.push(`/${savedCountry}`);
           }
           return;
         }
 
-        // Paso 2: No hay cookie, detectar país por IP
-        setLoadingProgress(40);
-        
-        await new Promise(resolve => setTimeout(resolve, 800));
-
-        // Paso 3: Realizar detección
-        setLoadingProgress(70);
-        
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Paso 4: Redirigir a la API de detección
-        setLoadingProgress(90);
-        
+        // Paso 2: Detectar país por IP
+        setLoadingProgress(50);
         await new Promise(resolve => setTimeout(resolve, 500));
         
-        if (isMounted) {
+        const detectedCountry = await detectUserCountry();
+        
+        setLoadingProgress(80);
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        if (detectedCountry && countries[detectedCountry]) {
+          // Guardar en cookie
+          document.cookie = `${COUNTRY_DETECTION_CONFIG.COOKIE.NAME}=${detectedCountry}; path=/; max-age=${COUNTRY_DETECTION_CONFIG.COOKIE.MAX_AGE}`;
+          
           setLoadingProgress(100);
-          // Usar window.location para forzar la navegación a la API
-          setTimeout(() => {
-            window.location.href = '/api/detect-country';
-          }, 300);
+          if (isMounted) {
+            router.push(`/${detectedCountry}`);
+          }
+        } else {
+          // País por defecto
+          const defaultCountry = COUNTRY_DETECTION_CONFIG.DEFAULT_COUNTRY;
+          document.cookie = `${COUNTRY_DETECTION_CONFIG.COOKIE.NAME}=${defaultCountry}; path=/; max-age=${COUNTRY_DETECTION_CONFIG.COOKIE.MAX_AGE}`;
+          
+          setLoadingProgress(100);
+          if (isMounted) {
+            router.push(`/${defaultCountry}`);
+          }
         }
 
       } catch (error) {
         console.error('Error en la detección de país:', error);
         
+        const defaultCountry = COUNTRY_DETECTION_CONFIG.DEFAULT_COUNTRY;
+        document.cookie = `${COUNTRY_DETECTION_CONFIG.COOKIE.NAME}=${defaultCountry}; path=/; max-age=${COUNTRY_DETECTION_CONFIG.COOKIE.MAX_AGE}`;
+        
+        setLoadingProgress(100);
         if (isMounted) {
-          setLoadingProgress(100);
-          
-          setTimeout(() => {
-            router.push(`/${COUNTRY_DETECTION_CONFIG.DEFAULT_COUNTRY}`);
-          }, 1000);
+          router.push(`/${defaultCountry}`);
         }
       }
     }
     
     handleCountryDetection();
 
-    // Cleanup function
     return () => {
       isMounted = false;
     };
@@ -85,9 +82,7 @@ export default function Home() {
 
   return (
     <div className="h-screen w-full overflow-hidden">
-      <LoadingScreen 
-        progress={loadingProgress}
-      />
+      <LoadingScreen progress={loadingProgress} />
     </div>
   );
 }
