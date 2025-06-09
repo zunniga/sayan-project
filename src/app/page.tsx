@@ -10,61 +10,77 @@ import { COUNTRY_DETECTION_CONFIG } from '@/config/country-detection';
 export default function Home() {
   const router = useRouter();
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+
+  // Detectar cliente primero
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
+    if (!isClient) return;
+
     let isMounted = true;
 
     async function handleCountryDetection() {
-      if (!isMounted) return;
-
       try {
-        // Paso 1: Verificar cookie existente
+        // Paso 1: Progreso inicial
         setLoadingProgress(20);
-        await new Promise(resolve => setTimeout(resolve, 300));
+        await new Promise(resolve => setTimeout(resolve, 500));
         
+        if (!isMounted) return;
+
+        // Paso 2: Verificar cookie
         const savedCountry = getCountryFromCookie();
         
         if (savedCountry && countries[savedCountry]) {
           setLoadingProgress(100);
+          await new Promise(resolve => setTimeout(resolve, 300));
           if (isMounted) {
             router.push(`/${savedCountry}`);
           }
           return;
         }
 
-        // Paso 2: Detectar país por IP
-        setLoadingProgress(50);
+        // Paso 3: Detectar país
+        setLoadingProgress(60);
         await new Promise(resolve => setTimeout(resolve, 500));
         
+        if (!isMounted) return;
+
         const detectedCountry = await detectUserCountry();
         
-        setLoadingProgress(80);
+        setLoadingProgress(90);
         await new Promise(resolve => setTimeout(resolve, 300));
 
-        if (detectedCountry && countries[detectedCountry]) {
-          // Guardar en cookie
-          document.cookie = `${COUNTRY_DETECTION_CONFIG.COOKIE.NAME}=${detectedCountry}; path=/; max-age=${COUNTRY_DETECTION_CONFIG.COOKIE.MAX_AGE}`;
-          
-          setLoadingProgress(100);
-          if (isMounted) {
-            router.push(`/${detectedCountry}`);
-          }
-        } else {
-          // País por defecto
-          const defaultCountry = COUNTRY_DETECTION_CONFIG.DEFAULT_COUNTRY;
-          document.cookie = `${COUNTRY_DETECTION_CONFIG.COOKIE.NAME}=${defaultCountry}; path=/; max-age=${COUNTRY_DETECTION_CONFIG.COOKIE.MAX_AGE}`;
-          
-          setLoadingProgress(100);
-          if (isMounted) {
-            router.push(`/${defaultCountry}`);
-          }
+        if (!isMounted) return;
+
+        const targetCountry = (detectedCountry && countries[detectedCountry]) 
+          ? detectedCountry 
+          : COUNTRY_DETECTION_CONFIG.DEFAULT_COUNTRY;
+
+        // Guardar en cookie
+        if (typeof document !== 'undefined') {
+          document.cookie = `${COUNTRY_DETECTION_CONFIG.COOKIE.NAME}=${targetCountry}; path=/; max-age=${COUNTRY_DETECTION_CONFIG.COOKIE.MAX_AGE}`;
+        }
+        
+        setLoadingProgress(100);
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        if (isMounted) {
+          router.push(`/${targetCountry}`);
         }
 
       } catch (error) {
         console.error('Error en la detección de país:', error);
         
+        if (!isMounted) return;
+
         const defaultCountry = COUNTRY_DETECTION_CONFIG.DEFAULT_COUNTRY;
-        document.cookie = `${COUNTRY_DETECTION_CONFIG.COOKIE.NAME}=${defaultCountry}; path=/; max-age=${COUNTRY_DETECTION_CONFIG.COOKIE.MAX_AGE}`;
+        
+        if (typeof document !== 'undefined') {
+          document.cookie = `${COUNTRY_DETECTION_CONFIG.COOKIE.NAME}=${defaultCountry}; path=/; max-age=${COUNTRY_DETECTION_CONFIG.COOKIE.MAX_AGE}`;
+        }
         
         setLoadingProgress(100);
         if (isMounted) {
@@ -78,7 +94,7 @@ export default function Home() {
     return () => {
       isMounted = false;
     };
-  }, [router]);
+  }, [router, isClient]);
 
   return (
     <div className="h-screen w-full overflow-hidden">
