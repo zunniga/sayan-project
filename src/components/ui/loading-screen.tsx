@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 
 interface LoadingScreenProps {
   progress?: number;
@@ -27,66 +27,74 @@ export function LoadingScreen({
     'Casi listo...'
   ];
 
-  // Posiciones fijas para las partículas (no aleatorias)
+  // Posiciones fijas para partículas (determinísticas)
   const particlePositions = [
-    { left: 10, top: 85, size: 'w-3 h-3', color: 'bg-blue-400/30' },
-    { left: 20, top: 90, size: 'w-2 h-2', color: 'bg-indigo-400/40' },
-    { left: 30, top: 88, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50' },
-    { left: 40, top: 92, size: 'w-3 h-3', color: 'bg-blue-400/30' },
-    { left: 50, top: 87, size: 'w-2 h-2', color: 'bg-indigo-400/40' },
-    { left: 60, top: 91, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50' },
-    { left: 70, top: 89, size: 'w-3 h-3', color: 'bg-blue-400/30' },
-    { left: 80, top: 93, size: 'w-2 h-2', color: 'bg-indigo-400/40' },
-    { left: 90, top: 86, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50' },
-    { left: 15, top: 94, size: 'w-3 h-3', color: 'bg-blue-400/30' },
-    { left: 25, top: 84, size: 'w-2 h-2', color: 'bg-indigo-400/40' },
-    { left: 35, top: 95, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50' },
-    { left: 45, top: 83, size: 'w-3 h-3', color: 'bg-blue-400/30' },
-    { left: 55, top: 96, size: 'w-2 h-2', color: 'bg-indigo-400/40' },
-    { left: 65, top: 82, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50' },
-    { left: 75, top: 97, size: 'w-3 h-3', color: 'bg-blue-400/30' },
-    { left: 85, top: 81, size: 'w-2 h-2', color: 'bg-indigo-400/40' },
-    { left: 95, top: 98, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50' },
-    { left: 12, top: 80, size: 'w-3 h-3', color: 'bg-blue-400/30' },
-    { left: 22, top: 99, size: 'w-2 h-2', color: 'bg-indigo-400/40' },
-    { left: 32, top: 79, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50' },
-    { left: 42, top: 100, size: 'w-3 h-3', color: 'bg-blue-400/30' },
-    { left: 52, top: 78, size: 'w-2 h-2', color: 'bg-indigo-400/40' },
-    { left: 62, top: 101, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50' },
-    { left: 72, top: 77, size: 'w-3 h-3', color: 'bg-blue-400/30' }
+    { left: 10, top: 85, size: 'w-3 h-3', color: 'bg-blue-400/30', delay: 0 },
+    { left: 20, top: 90, size: 'w-2 h-2', color: 'bg-indigo-400/40', delay: 0.1 },
+    { left: 30, top: 88, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50', delay: 0.2 },
+    { left: 40, top: 92, size: 'w-3 h-3', color: 'bg-blue-400/30', delay: 0.3 },
+    { left: 50, top: 87, size: 'w-2 h-2', color: 'bg-indigo-400/40', delay: 0.4 },
+    { left: 60, top: 91, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50', delay: 0.5 },
+    { left: 70, top: 89, size: 'w-3 h-3', color: 'bg-blue-400/30', delay: 0.6 },
+    { left: 80, top: 93, size: 'w-2 h-2', color: 'bg-indigo-400/40', delay: 0.7 },
+    { left: 90, top: 86, size: 'w-1.5 h-1.5', color: 'bg-cyan-400/50', delay: 0.8 },
+    { left: 15, top: 94, size: 'w-3 h-3', color: 'bg-blue-400/30', delay: 0.9 },
   ];
 
-  // Detectar si estamos en el cliente para evitar hydration mismatch
+  // Detectar cliente para evitar hydration mismatch
   useEffect(() => {
-    setIsClient(true);
+    const timer = setTimeout(() => {
+      setIsClient(true);
+    }, 50); // Pequeño retraso para asegurar hidratación completa
+
+    return () => clearTimeout(timer);
   }, []);
 
-  // Animación del progreso
+  // Callback para manejar la finalización
+  const handleComplete = useCallback(() => {
+    setIsComplete(true);
+    onComplete?.();
+  }, [onComplete]);
+
+  // Animación del progreso - solo en cliente
   useEffect(() => {
+    if (!isClient) return;
+
     if (progress > 0) {
       setCurrentProgress(progress);
+      
+      // Actualizar etapa basada en progreso
+      if (progress > 20 && progress <= 40) setLoadingStage(1);
+      else if (progress > 40 && progress <= 60) setLoadingStage(2);
+      else if (progress > 60 && progress <= 80) setLoadingStage(3);
+      else if (progress > 80) setLoadingStage(4);
+
+      if (progress >= 100) {
+        const timer = setTimeout(handleComplete, 800);
+        return () => clearTimeout(timer);
+      }
       return;
     }
 
+    // Incrementos determinísticos para evitar Math.random()
+    const increments = [8, 12, 15, 10, 7, 13, 9, 11, 14, 6];
+    let incrementIndex = 0;
+
     const interval = setInterval(() => {
       setCurrentProgress(prev => {
-        // Usar incrementos fijos en lugar de Math.random()
-        const increments = [8, 12, 15, 10, 7, 13, 9, 11, 14, 6];
-        const increment = increments[Math.floor(prev / 10) % increments.length];
-        const newProgress = prev + increment;
+        const increment = increments[incrementIndex % increments.length];
+        incrementIndex++;
+        const newProgress = Math.min(prev + increment, 100);
         
         // Actualizar etapa basada en progreso
-        if (newProgress > 20 && newProgress < 40) setLoadingStage(1);
-        else if (newProgress > 40 && newProgress < 60) setLoadingStage(2);
-        else if (newProgress > 60 && newProgress < 80) setLoadingStage(3);
+        if (newProgress > 20 && newProgress <= 40) setLoadingStage(1);
+        else if (newProgress > 40 && newProgress <= 60) setLoadingStage(2);
+        else if (newProgress > 60 && newProgress <= 80) setLoadingStage(3);
         else if (newProgress > 80) setLoadingStage(4);
 
         if (newProgress >= 100) {
           clearInterval(interval);
-          setTimeout(() => {
-            setIsComplete(true);
-            onComplete?.();
-          }, 800);
+          setTimeout(handleComplete, 800);
           return 100;
         }
         return newProgress;
@@ -94,9 +102,9 @@ export function LoadingScreen({
     }, 150);
 
     return () => clearInterval(interval);
-  }, [progress, onComplete]);
+  }, [progress, isClient, handleComplete]);
 
-  // Variantes mejoradas
+  // Variantes de animación
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: { 
@@ -166,7 +174,6 @@ export function LoadingScreen({
     }
   };
 
-  // Variantes para partículas flotantes (sin Math.random())
   const particleVariants = {
     initial: { 
       scale: 0, 
@@ -178,17 +185,15 @@ export function LoadingScreen({
       opacity: [0, 0.8, 0.6, 0],
       rotate: [0, 180, 360],
       y: [0, -120, -200],
-      x: [0, 30, -15], // Valores fijos en lugar de aleatorios
+      x: [0, 30, -15],
       transition: {
         repeat: Infinity,
         duration: 4,
-        delay: 0,
         ease: 'easeOut'
       }
     }
   };
 
-  // Anillo principal mejorado
   const mainRingVariants = {
     initial: { rotate: 0, scale: 0.8, opacity: 0.6 },
     animate: {
@@ -215,16 +220,9 @@ export function LoadingScreen({
     }
   };
 
-  // No renderizar hasta que esté en el cliente para evitar hydration issues
+  // No renderizar hasta que el cliente esté listo
   if (!isClient) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-blue-950">
-        <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-gray-600 dark:text-gray-300">Cargando...</p>
-        </div>
-      </div>
-    );
+    return null;
   }
 
   return (
@@ -232,6 +230,7 @@ export function LoadingScreen({
       {!isComplete && (
         <motion.div 
           className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden"
+          suppressHydrationWarning={true}
           style={{
             background: `
               radial-gradient(circle at 20% 80%, rgba(30, 90, 200, 0.4) 0%, transparent 50%),
@@ -245,14 +244,17 @@ export function LoadingScreen({
           animate="visible"
           exit="exit"
         >
-          {/* Modo oscuro overlay */}
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-950 to-indigo-950 dark:opacity-100 opacity-0 transition-opacity duration-500" />
+          {/* Overlay modo oscuro */}
+          <div 
+            className="absolute inset-0 bg-gradient-to-br from-gray-900 via-blue-950 to-indigo-950 dark:opacity-100 opacity-0 transition-opacity duration-500" 
+            suppressHydrationWarning={true}
+          />
           
-          {/* Partículas flotantes con posiciones fijas */}
-          <div className="absolute inset-0 overflow-hidden">
+          {/* Partículas flotantes con valores determinísticos */}
+          <div className="absolute inset-0 overflow-hidden" suppressHydrationWarning={true}>
             {particlePositions.map((particle, i) => (
               <motion.div
-                key={i}
+                key={`particle-${i}`}
                 className={`absolute rounded-full ${particle.size} ${particle.color}`}
                 style={{
                   left: `${particle.left}%`,
@@ -264,18 +266,19 @@ export function LoadingScreen({
                     ...particleVariants.animate,
                     transition: {
                       ...particleVariants.animate.transition,
-                      delay: i * 0.1, // Delay basado en índice, no aleatorio
+                      delay: particle.delay,
                     }
                   }
                 }}
                 initial="initial"
                 animate="animate"
+                suppressHydrationWarning={true}
               />
             ))}
           </div>
 
           {/* Efectos de fondo geométricos */}
-          <div className="absolute inset-0 opacity-10 dark:opacity-20">
+          <div className="absolute inset-0 opacity-10 dark:opacity-20" suppressHydrationWarning={true}>
             <div className="absolute top-1/4 left-1/4 w-32 h-32 border border-blue-300 rounded-full animate-pulse" />
             <div className="absolute bottom-1/4 right-1/4 w-24 h-24 border border-indigo-300 rounded-lg rotate-45 animate-pulse" style={{ animationDelay: '1s' }} />
             <div className="absolute top-1/2 right-1/3 w-16 h-16 border border-cyan-300 rounded-full animate-pulse" style={{ animationDelay: '2s' }} />
@@ -285,6 +288,7 @@ export function LoadingScreen({
           <motion.div
             className="relative mb-12"
             variants={logoVariants}
+            suppressHydrationWarning={true}
           >
             {/* Anillo exterior principal */}
             <motion.div
@@ -296,6 +300,7 @@ export function LoadingScreen({
               variants={mainRingVariants}
               initial="initial"
               animate="animate"
+              suppressHydrationWarning={true}
             >
               <div className="w-full h-full bg-white dark:bg-gray-900 rounded-full" />
             </motion.div>
@@ -319,20 +324,7 @@ export function LoadingScreen({
                   ease: 'easeInOut'
                 }
               }}
-            />
-
-            {/* Anillo interior pulsante */}
-            <motion.div
-              className="absolute inset-8 w-32 h-32 bg-gradient-to-r from-blue-400/20 to-indigo-400/20 rounded-full"
-              animate={{
-                scale: [1, 1.2, 1],
-                opacity: [0.3, 0.7, 0.3]
-              }}
-              transition={{
-                repeat: Infinity,
-                duration: 2,
-                ease: 'easeInOut'
-              }}
+              suppressHydrationWarning={true}
             />
 
             {/* Logo central */}
@@ -347,6 +339,7 @@ export function LoadingScreen({
                   duration: 4,
                   ease: 'easeInOut'
                 }}
+                suppressHydrationWarning={true}
               >
                 <Image 
                   src="/logos/CIMADE ICONO.svg"
@@ -368,10 +361,11 @@ export function LoadingScreen({
             </div>
           </motion.div>
           
-          {/* Título principal mejorado */}
+          {/* Título principal */}
           <motion.div
             className="text-center mb-8"
             variants={textVariants}
+            suppressHydrationWarning={true}
           >
             <motion.h1 
               className="text-5xl md:text-6xl font-bold mb-4 relative"
@@ -390,35 +384,39 @@ export function LoadingScreen({
                 WebkitTextFillColor: 'transparent',
                 backgroundClip: 'text'
               }}
+              suppressHydrationWarning={true}
             >
               CIMADE
             </motion.h1>
             <motion.p 
               className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl leading-relaxed"
               variants={textVariants}
+              suppressHydrationWarning={true}
             >
               Centro de Investigación y Mejoramiento Académico para el Desarrollo Educativo
             </motion.p>
           </motion.div>
 
-          {/* Progreso mejorado */}
+          {/* Sección de progreso */}
           <motion.div
             className="w-full max-w-md px-4"
             variants={progressContainerVariants}
+            suppressHydrationWarning={true}
           >
             {/* Mensaje dinámico */}
             <motion.p
               className="text-center text-gray-500 dark:text-gray-400 mb-6 font-medium"
-              key={loadingStage}
+              key={`message-${loadingStage}`}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
+              suppressHydrationWarning={true}
             >
               {loadingMessages[loadingStage]}
             </motion.p>
 
             {/* Barra de progreso moderna */}
-            <div className="relative mb-4">
+            <div className="relative mb-4" suppressHydrationWarning={true}>
               <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
                 <motion.div
                   className="h-full relative rounded-full"
@@ -435,8 +433,8 @@ export function LoadingScreen({
                     width: { duration: 0.3, ease: 'easeOut' },
                     backgroundPosition: { repeat: Infinity, duration: 2, ease: 'linear' }
                   }}
+                  suppressHydrationWarning={true}
                 >
-                  {/* Brillo de progreso */}
                   <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
                 </motion.div>
               </div>
@@ -449,7 +447,7 @@ export function LoadingScreen({
               </div>
             </div>
 
-            {/* Porcentaje con animación */}
+            {/* Porcentaje */}
             <motion.div
               className="text-center text-2xl font-bold text-gray-700 dark:text-gray-200 mb-8"
               animate={{
@@ -460,19 +458,21 @@ export function LoadingScreen({
                 duration: 1.5,
                 ease: 'easeInOut'
               }}
+              suppressHydrationWarning={true}
             >
               {Math.round(currentProgress)}%
             </motion.div>
           </motion.div>
 
-          {/* Indicadores de carga mejorados */}
+          {/* Indicadores de carga */}
           <motion.div 
             className="flex space-x-3 mb-12"
             variants={textVariants}
+            suppressHydrationWarning={true}
           >
             {[0, 0.2, 0.4, 0.6, 0.8].map((delay, index) => (
               <motion.div
-                key={index}
+                key={`indicator-${index}`}
                 className="w-3 h-3 rounded-full"
                 style={{
                   background: 'linear-gradient(45deg, #1E5AC8, #40C8F8)'
@@ -487,14 +487,16 @@ export function LoadingScreen({
                   delay,
                   ease: 'easeInOut'
                 }}
+                suppressHydrationWarning={true}
               />
             ))}
           </motion.div>
 
-          {/* Footer mejorado */}
+          {/* Footer */}
           <motion.div
             className="absolute bottom-8 text-center"
             variants={textVariants}
+            suppressHydrationWarning={true}
           >
             <motion.p 
               className="text-sm text-gray-400 dark:text-gray-500 mb-2"
@@ -506,6 +508,7 @@ export function LoadingScreen({
                 duration: 3,
                 ease: 'easeInOut'
               }}
+              suppressHydrationWarning={true}
             >
               Preparando tu experiencia educativa de excelencia
             </motion.p>

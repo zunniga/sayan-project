@@ -3,91 +3,102 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { LoadingScreen } from '@/components/ui/loading-screen';
-import { getCountryFromCookie } from '@/lib/api/ipapi';
+import { detectUserCountry, getCountryFromCookie } from '@/lib/api/ipapi';
 import { countries } from '@/config/countries';
 import { COUNTRY_DETECTION_CONFIG } from '@/config/country-detection';
 
 export default function Home() {
   const router = useRouter();
   const [loadingProgress, setLoadingProgress] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+
+  // Detectar cliente primero
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
+    if (!isClient) return;
+
     let isMounted = true;
 
     async function handleCountryDetection() {
-      if (!isMounted) return;
-
       try {
-        // Paso 1: Verificar si ya tenemos una cookie de país
+        // Paso 1: Progreso inicial
         setLoadingProgress(20);
-        
         await new Promise(resolve => setTimeout(resolve, 500));
         
+        if (!isMounted) return;
+
+        // Paso 2: Verificar cookie
         const savedCountry = getCountryFromCookie();
         
         if (savedCountry && countries[savedCountry]) {
-          setLoadingProgress(80);
-          
-          await new Promise(resolve => setTimeout(resolve, 800));
-          
+          setLoadingProgress(100);
+          await new Promise(resolve => setTimeout(resolve, 300));
           if (isMounted) {
-            setLoadingProgress(100);
-            setTimeout(() => {
-              router.push(`/${savedCountry}`);
-            }, 500);
+            router.push(`/${savedCountry}`);
           }
           return;
         }
 
-        // Paso 2: No hay cookie, detectar país por IP
-        setLoadingProgress(40);
+        // Paso 3: Detectar país
+        setLoadingProgress(60);
+        await new Promise(resolve => setTimeout(resolve, 500));
         
-        await new Promise(resolve => setTimeout(resolve, 800));
+        if (!isMounted) return;
 
-        // Paso 3: Realizar detección
-        setLoadingProgress(70);
+        const detectedCountry = await detectUserCountry();
         
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Paso 4: Redirigir a la API de detección
         setLoadingProgress(90);
+        await new Promise(resolve => setTimeout(resolve, 300));
+
+        if (!isMounted) return;
+
+        const targetCountry = (detectedCountry && countries[detectedCountry]) 
+          ? detectedCountry 
+          : COUNTRY_DETECTION_CONFIG.DEFAULT_COUNTRY;
+
+        // Guardar en cookie
+        if (typeof document !== 'undefined') {
+          document.cookie = `${COUNTRY_DETECTION_CONFIG.COOKIE.NAME}=${targetCountry}; path=/; max-age=${COUNTRY_DETECTION_CONFIG.COOKIE.MAX_AGE}`;
+        }
         
+        setLoadingProgress(100);
         await new Promise(resolve => setTimeout(resolve, 500));
         
         if (isMounted) {
-          setLoadingProgress(100);
-          // Usar window.location para forzar la navegación a la API
-          setTimeout(() => {
-            window.location.href = '/api/detect-country';
-          }, 300);
+          router.push(`/${targetCountry}`);
         }
 
       } catch (error) {
         console.error('Error en la detección de país:', error);
         
+        if (!isMounted) return;
+
+        const defaultCountry = COUNTRY_DETECTION_CONFIG.DEFAULT_COUNTRY;
+        
+        if (typeof document !== 'undefined') {
+          document.cookie = `${COUNTRY_DETECTION_CONFIG.COOKIE.NAME}=${defaultCountry}; path=/; max-age=${COUNTRY_DETECTION_CONFIG.COOKIE.MAX_AGE}`;
+        }
+        
+        setLoadingProgress(100);
         if (isMounted) {
-          setLoadingProgress(100);
-          
-          setTimeout(() => {
-            router.push(`/${COUNTRY_DETECTION_CONFIG.DEFAULT_COUNTRY}`);
-          }, 1000);
+          router.push(`/${defaultCountry}`);
         }
       }
     }
     
     handleCountryDetection();
 
-    // Cleanup function
     return () => {
       isMounted = false;
     };
-  }, [router]);
+  }, [router, isClient]);
 
   return (
     <div className="h-screen w-full overflow-hidden">
-      <LoadingScreen 
-        progress={loadingProgress}
-      />
+      <LoadingScreen progress={loadingProgress} />
     </div>
   );
 }
