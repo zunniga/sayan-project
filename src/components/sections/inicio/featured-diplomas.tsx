@@ -1,13 +1,9 @@
-'use client';
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import {
-  Award,
-  ArrowRight,
-  Crown
-} from 'lucide-react';
+import React from "react";
+import Link from "next/link";
+import { motion } from "framer-motion";
+import { Award, ArrowRight } from "lucide-react";
 import { GraduateData } from "@/types/graduate";
 import { DiplomaGrid } from "@/components/ui/diploma-grid";
 
@@ -21,7 +17,7 @@ export function FeaturedDiplomas({
   graduates,
 }: FeaturedDiplomasProps) {
   return (
-    <section className="py-24 md:py-32 relative overflow-hidden">
+    <section className="py-24 lg:-mt-20 md:py-32 relative overflow-hidden">
       {/* Floating elements - purple/violet theme para distinguir de cursos */}
       <motion.div
         className="absolute top-20 right-10 w-32 h-32 bg-gradient-to-r from-purple-500/10 to-violet-500/10 rounded-full blur-xl"
@@ -63,43 +59,30 @@ export function FeaturedDiplomas({
             viewport={{ once: true }}
           >
             <motion.div
-              className="inline-block mb-6"
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-            >
-              <div className="bg-gradient-to-r from-purple-600 to-violet-600 text-white px-6 py-3 rounded-full text-sm font-bold tracking-wide flex items-center shadow-lg">
-                <Award className="w-5 h-5 mr-3" />
-                DIPLOMADOS ESPECIALIZADOS
-                <Crown className="w-5 h-5 ml-3" />
-              </div>
-            </motion.div>
-
-            <motion.h2
-              className="text-5xl md:text-6xl lg:text-7xl font-black bg-gradient-to-r from-gray-900 via-purple-800 to-violet-900 dark:from-white dark:via-purple-200 dark:to-violet-200 bg-clip-text text-transparent mb-6 leading-tight"
-              initial={{ opacity: 0, y: -20 }}
+              className="text-center mb-16"
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, amount: 0.3 }}
             >
-              Especialízate con
-              <br />
-              <span className="text-transparent bg-gradient-to-r from-purple-600 to-violet-600 bg-clip-text">
-                Diplomas de Elite
-              </span>
-            </motion.h2>
+              <div className="inline-flex items-center justify-center mb-2">
+                <span className="mx-4 text-white p-2 rounded-2xl font-bold text-sm tracking-[0.2em] uppercase bg-gradient-to-r from-[#12a9be] to-[#12a9be] dark:bg-gradient-to-r dark:from-[#12a9be]/50 dark:to-[#12a9be] shadow-lg transition-transform duration-300 hover:scale-105">
+                  DIPLOMADOS
+                </span>
+              </div>
 
-            <motion.p
-              className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed mb-10"
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              viewport={{ once: true }}
-            >
-              Programas intensivos diseñados por expertos para profesionales que buscan
-              especialización avanzada y certificación de prestigio internacional.
-            </motion.p>
+              <h2 className="text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white mb-6">
+                Nuestros{" "}
+                <span className="bg-gradient-to-r from-[#12a9be] to-[#0d617b]  bg-clip-text text-transparent">
+                  Diplomados
+                </span>
+              </h2>
+
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                Transforma tu futuro profesional con programas de vanguardia
+                diseñados por líderes de la industria
+              </p>
+            </motion.div>
           </motion.div>
 
           {/* Course Grid Component */}
@@ -117,7 +100,9 @@ export function FeaturedDiplomas({
           >
             <Link
               href={`/${countryCode}/diplomados`}
-              className="group inline-flex items-center bg-gradient-to-r from-purple-600 to-violet-600 hover:from-purple-700 hover:to-violet-700 text-white font-bold px-8 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="group inline-flex items-center -700 bg-gradient-to-r from-[#0d617b] to-[#12a9be] 
+        dark:from-[#12a9be] dark:to-[#0d617b] 
+        text-white font-bold px-8 py-4 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <Award className="w-5 h-5 mr-3" />
               Ver Todos los Diplomados

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "CIMADE - Educación Continua",
+  title: "SAYAN",
   description: "Somos una institución dedicada a la formación profesional y certificación de competencias en Perú.",
 }
 

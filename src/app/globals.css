@@ -57,14 +57,17 @@
     from {
       height: 0;
     }
+
     to {
       height: var(--radix-accordion-content-height);
     }
   }
+
   @keyframes accordion-up {
     from {
       height: var(--radix-accordion-content-height);
     }
+
     to {
       height: 0;
     }
@@ -72,6 +75,7 @@
 }
 
 @layer base {
+
   *,
   ::after,
   ::before,
@@ -86,11 +90,12 @@
     font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
     min-height: 100vh;
   }
-  
+
   /* Gradiente para el modo oscuro con tonos azules de CIMADE */
-  :root.dark body, body.dark {
+  :root.dark body,
+  body.dark {
     background: rgb(10, 10, 20) !important;
-    background-image: 
+    background-image:
       /* Círculo superior derecho - azul principal */
       radial-gradient(circle at 85% 15%, rgba(30, 90, 200, 0.4) 0%, rgba(30, 90, 200, 0.1) 40%, rgba(0, 0, 0, 0) 70%),
       /* Círculo inferior izquierdo - azul claro */
@@ -107,9 +112,10 @@
   }
 
   /* Gradiente para el modo claro con tonos azules de CIMADE */
-  :root:not(.dark) body, body:not(.dark) {
+  :root:not(.dark) body,
+  body:not(.dark) {
     background: rgb(248, 250, 255) !important;
-    background-image: 
+    background-image:
       /* Círculo superior derecho - azul principal suave */
       radial-gradient(circle at 85% 15%, rgba(30, 90, 200, 0.12) 0%, rgba(30, 90, 200, 0.04) 40%, rgba(255, 255, 255, 0) 70%),
       /* Círculo inferior izquierdo - azul claro suave */
@@ -134,8 +140,8 @@
     --card-foreground: 210 10% 10%;
     --popover: 0 0% 100%;
     --popover-foreground: 210 10% 10%;
-    --primary: 210 100% 30%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 193, 81%, 27%;
+    --primary-foreground: 193, 81%, 27%;
     --secondary: 210 30% 96%;
     --secondary-foreground: 210 70% 30%;
     --muted: 210 20% 96%;
@@ -162,6 +168,7 @@
     --sidebar-border: 210 20% 91%;
     --sidebar-ring: 210 70% 40%;
   }
+
   .dark {
     --background: 210 30% 5%;
     --foreground: 210 10% 98%;
@@ -169,8 +176,8 @@
     --card-foreground: 210 10% 98%;
     --popover: 210 30% 8%;
     --popover-foreground: 210 10% 98%;
-    --primary: 210 90% 50%;
-    --primary-foreground: 0 0% 98%;
+    --primary: 68, 100%, 43%;
+    --primary-foreground: 68, 100%, 43%;
     --secondary: 210 30% 15%;
     --secondary-foreground: 210 10% 98%;
     --muted: 210 30% 15%;
@@ -202,6 +209,7 @@
   * {
     @apply border-border;
   }
+
   body {
     @apply bg-background text-foreground;
   }

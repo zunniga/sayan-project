@@ -1,216 +1,366 @@
 "use client";
 
-import React, { useCallback, useEffect, useState } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import Image from "next/image";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight, ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 
-interface HeroSlide {
-  id: string;
-  title: string;
-  subtitle: string;
-  description: string;
-  image: string;
-  ctaText: string;
-  ctaLink: string;
-}
+// Variantes de animación para el contenedor principal
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      delayChildren: 0.3,
+      staggerChildren: 0.2,
+    },
+  },
+};
 
-interface HeroCarouselProps {
-  slides: HeroSlide[];
-  countryName: string;
-}
+// Variantes para elementos que vienen desde la izquierda
+const slideInLeft = {
+  hidden: {
+    x: -100,
+    opacity: 0,
+    scale: 0.8,
+  },
+  visible: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "spring",
+      damping: 25,
+      stiffness: 120,
+      duration: 0.8,
+    },
+  },
+};
 
-export function HeroCarousel({ slides, countryName }: HeroCarouselProps) {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
-  const [selectedIndex, setSelectedIndex] = useState(0);
+// Variantes para elementos que vienen desde la derecha
+const slideInRight = {
+  hidden: {
+    x: 100,
+    opacity: 0,
+    scale: 0.8,
+  },
+  visible: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "spring",
+      damping: 20,
+      stiffness: 100,
+      duration: 1,
+    },
+  },
+};
 
-  const scrollPrev = useCallback(() => {
-    if (emblaApi) emblaApi.scrollPrev();
-  }, [emblaApi]);
+// Variantes para el título con efecto de escritura
+const titleVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+      delayChildren: 0.5,
+    },
+  },
+};
 
-  const scrollNext = useCallback(() => {
-    if (emblaApi) emblaApi.scrollNext();
-  }, [emblaApi]);
+const letterVariants = {
+  hidden: {
+    opacity: 0,
+    y: 50,
+  },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      type: "spring",
+      damping: 12,
+      stiffness: 200,
+    },
+  },
+};
 
-  useEffect(() => {
-    if (!emblaApi) return;
+// Variantes para elementos flotantes
+const floatingVariants = {
+  hidden: {
+    opacity: 0,
+    scale: 0,
+  },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: {
+      type: "spring",
+      damping: 15,
+      stiffness: 100,
+      delay: 1.2,
+    },
+  },
+};
 
-    const onSelect = () => {
-      setSelectedIndex(emblaApi.selectedScrollSnap());
-    };
-
-    emblaApi.on("select", onSelect);
-    onSelect();
-
-    return () => {
-      emblaApi.off("select", onSelect);
-    };
-  }, [emblaApi]);
+export default function HeroCarousel() {
+  // Función para dividir texto en palabras para animación
+  const splitText = (text: string) => {
+    return text.split(" ").map((word, index) => (
+      <motion.span
+        key={index}
+        variants={letterVariants}
+        className="inline-block mr-2"
+      >
+        {word}
+      </motion.span>
+    ));
+  };
 
   return (
-    <div className="relative overflow-hidden w-full h-screen">
-      {/* Línea decorativa superior */}
-      <div className="absolute top-0 left-0 right-0 z-30">
-        <div className="h-1 bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-60"></div>
-        <div className="h-px bg-gradient-to-r from-blue-400/20 via-blue-300/60 to-blue-400/20"></div>
+    <motion.div
+      className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-white via-[#12a9be]/5 to-[#b6d900]/10 dark:from-slate-900 dark:via-[#0d617b]/10 dark:to-[#12a9be]/5"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="absolute inset-0 opacity-50">
+        {/* Imagen para modo claro */}
+        <Image
+          src="/peru/hero/saya2.png"
+          alt=""
+          fill
+          className="object-cover dark:hidden"
+          priority
+        />
+        {/* Imagen para modo oscuro */}
+        <Image
+          src="/peru/hero/saya1.png"
+          alt=""
+          fill
+          className="object-cover hidden dark:block"
+          priority
+        />
       </div>
-
-      {/* Elemento decorativo lateral izquierdo */}
-      <div className="absolute left-0 top-1/2 transform -translate-y-1/2 z-20">
-        <div className="w-1 h-32 bg-gradient-to-b from-transparent via-blue-400/80 to-transparent"></div>
-      </div>
-
-      {/* Elemento decorativo lateral derecho */}
-      <div className="absolute right-0 top-1/2 transform -translate-y-1/2 z-20">
-        <div className="w-1 h-32 bg-gradient-to-b from-transparent via-blue-400/80 to-transparent"></div>
-      </div>
-
-      <div className="embla overflow-hidden h-full" ref={emblaRef}>
-        <div className="embla__container flex h-full">
-          {slides.map((slide, index) => (
-            <div
-              key={slide.id}
-              className="embla__slide flex-[0_0_100%] min-w-0 relative h-full"
+      
+      {/* Elementos flotantes decorativos */}
+      <motion.div
+        className="absolute top-20 right-20 w-20 h-20 bg-[#12a9be]/20 dark:bg-[#12a9be]/30 rounded-full blur-xl"
+        variants={floatingVariants}
+        animate={{
+          y: [0, -20, 0],
+          x: [0, 10, 0],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{
+          duration: 6,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+        }}
+      />
+      <motion.div
+        className="absolute top-1/3 right-1/4 w-12 h-12 bg-[#b6d900]/30 dark:bg-[#b6d900]/40 rounded-full blur-lg"
+        variants={floatingVariants}
+        animate={{
+          y: [0, 15, 0],
+          x: [0, -8, 0],
+          rotate: [0, 180, 360],
+        }}
+        transition={{
+          duration: 4,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+          delay: 1,
+        }}
+      />
+      <motion.div
+        className="absolute bottom-1/3 left-10 w-16 h-16 bg-[#0d617b]/20 dark:bg-[#0d617b]/30 rounded-full blur-lg"
+        variants={floatingVariants}
+        animate={{
+          y: [0, -25, 0],
+          x: [0, 12, 0],
+          scale: [1, 0.8, 1],
+        }}
+        transition={{
+          duration: 5,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+          delay: 2,
+        }}
+      />
+      {/* Contenido principal https://www.wispredes.com/ */}
+      <div className="container mx-auto px-4 relative z-10">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[80vh]">
+          {/* Contenido de texto */}
+          <motion.div
+            className="text-[#0d617b] dark:text-white order-2 lg:order-1"
+            variants={slideInLeft}
+          >
+            <motion.div
+              className="text-4xl text-center lg:text-left md:text-5xl lg:text-6xl xl:text-7xl font-extrabold mb-6"
+              variants={titleVariants}
             >
-              <div className="relative w-full h-full">
-                {/* Fondo de imagen con overlay */}
-                <div className="absolute inset-0 z-0">
-                  <Image
-                    src={slide.image}
-                    alt={slide.title}
-                    fill
-                    className="object-cover"
-                    priority={index === 0}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/60" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/30" />
-                </div>
-
-                {/* Contenido */}
-                <div className="relative z-10 h-full flex flex-col justify-center px-4 sm:px-6 md:px-16 max-w-7xl mx-auto">
-                  <motion.div
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                    className="space-y-4 sm:space-y-6 max-w-2xl lg:max-w-4xl"
-                  >
-                    {/* Badge con línea decorativa */}
-                    <motion.div
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.6, delay: 0.4 }}
-                      className="flex items-center space-x-4"
-                    >
-                      <div className="w-12 h-px bg-gradient-to-r from-blue-400 to-transparent"></div>
-                      <p className="text-blue-400 font-semibold tracking-widest uppercase text-xs sm:text-sm">
-                        CIMADE {countryName}
-                      </p>
-                    </motion.div>
-
-                    <motion.h1
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.8, delay: 0.6 }}
-                      className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight"
-                    >
-                      {slide.title}
-                    </motion.h1>
-
-                    <motion.p
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 0.8 }}
-                      className="text-lg sm:text-xl md:text-2xl font-medium text-gray-200 leading-relaxed"
-                    >
-                      {slide.subtitle}
-                    </motion.p>
-
-                    <motion.p
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.6, delay: 1.0 }}
-                      className="text-gray-300 text-base sm:text-lg max-w-2xl leading-relaxed"
-                    >
-                      {slide.description}
-                    </motion.p>
-
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.6, delay: 1.2 }}
-                      className="pt-4 sm:pt-6"
-                    >
-                      <Link
-                        href={slide.ctaLink}
-                        className="group inline-flex items-center bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 text-base font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 relative overflow-hidden"
-                      >
-                        <span className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-                        <span className="relative">{slide.ctaText}</span>
-                        <ChevronRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1 relative" />
-                      </Link>
-                    </motion.div>
-                  </motion.div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Controles de navegación mejorados */}
-      <div className="absolute z-20 bottom-6 right-6 flex space-x-3">
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={scrollPrev}
-          className="bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/20 text-white hover:text-white shadow-lg hover:shadow-xl transition-all duration-300 w-12 h-12 relative overflow-hidden group"
-        >
-          <span className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-          <ArrowLeft className="h-4 w-4 relative z-10" />
-          <span className="sr-only">Anterior</span>
-        </Button>
-        <Button
-          variant="outline"
-          size="icon"
-          onClick={scrollNext}
-          className="bg-white/10 backdrop-blur-md hover:bg-white/20 border border-white/20 text-white hover:text-white shadow-lg hover:shadow-xl transition-all duration-300 w-12 h-12 relative overflow-hidden group"
-        >
-          <span className="absolute inset-0 bg-gradient-to-r from-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-          <ArrowRight className="h-4 w-4 relative z-10" />
-          <span className="sr-only">Siguiente</span>
-        </Button>
-      </div>
-
-      {/* Indicadores de slides elegantes */}
-      {slides.length > 1 && (
-        <div className="absolute bottom-6 left-6 z-20">
-          <div className="flex items-center space-x-2">
-            <div className="text-white/60 text-sm font-medium">
-              {String(selectedIndex + 1).padStart(2, "0")}
-            </div>
-            <div className="w-16 h-px bg-white/20 relative overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500 ease-out"
-                style={{
-                  width: `${((selectedIndex + 1) / slides.length) * 100}%`,
+              <motion.span
+                className="text-[#0d617b] dark:text-white"
+                variants={letterVariants}
+              >
+                {splitText("Educación que")}
+              </motion.span>
+              <br />
+              <motion.span
+                className="text-transparent bg-clip-text bg-gradient-to-r from-[#b6d900] to-[#12a9be] dark:from-[#b6d900] dark:to-[#12a9be]"
+                variants={letterVariants}
+                whileHover={{
+                  scale: 1.05,
+                  transition: { duration: 0.2 },
                 }}
-              ></div>
-            </div>
-            <div className="text-white/40 text-sm">
-              {String(slides.length).padStart(2, "0")}
-            </div>
-          </div>
-        </div>
-      )}
+              >
+                transforma vidas.
+              </motion.span>
+            </motion.div>
 
-      {/* Línea decorativa inferior */}
-      <div className="absolute bottom-0 left-0 right-0 z-30">
-        <div className="h-px bg-gradient-to-r from-blue-400/20 via-blue-300/60 to-blue-400/20"></div>
-        <div className="h-1 bg-gradient-to-r from-transparent via-blue-500/40 to-transparent"></div>
+            <motion.p
+              className="text-lg md:text-xl text-center lg:text-left lg:text-2xl mb-8 text-[#0d617b]/80 dark:text-gray-300 leading-relaxed"
+              variants={{
+                hidden: { opacity: 0, y: 30, scale: 0.9 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  scale: 1,
+                  transition: {
+                    type: "spring",
+                    damping: 20,
+                    stiffness: 100,
+                    delay: 1.5,
+                  },
+                },
+              }}
+            >
+              Capacitación 100% virtual, accesible y certificada en áreas
+              técnicas y profesionales.
+            </motion.p>
+
+            <motion.div
+              className="flex flex-wrap gap-4 mb-12 justify-center lg:justify-start"
+              variants={{
+                hidden: { opacity: 0, y: 50 },
+                visible: {
+                  opacity: 1,
+                  y: 0,
+                  transition: {
+                    type: "spring",
+                    damping: 15,
+                    stiffness: 100,
+                    delay: 2,
+                  },
+                },
+              }}
+            >
+              <motion.div
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 20px 40px rgba(18, 169, 190, 0.3)",
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  asChild
+                  size="lg"
+                  className="text-lg px-8 py-4 bg-gradient-to-r from-[#0d617b] to-[#12a9be] hover:from-[#12a9be] hover:to-[#12a9be] text-white border-0 shadow-lg transition-all duration-300 hover:shadow-lg hover:shadow-[#12a9be]/25 rounded-full"
+                >
+                  <Link href="/graduates">Ver diplomados</Link>
+                </Button>
+              </motion.div>
+
+              <motion.div
+                whileHover={{
+                  scale: 1.05,
+                  boxShadow: "0 20px 40px rgba(18, 169, 190, 0.3)",
+                }}
+                whileTap={{ scale: 0.95 }}
+              >
+                <Button
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="text-lg px-8 py-4 border-2 border-[#12a9be] text-[#0d617b] dark:text-[#12a9be] hover:bg-[#12a9be] hover:text-white dark:hover:text-white transition-all duration-300 rounded-full"
+                >
+                  <Link href="/#contacts">Contáctanos</Link>
+                </Button>
+              </motion.div>
+            </motion.div>
+          </motion.div>
+
+          {/* Área con imagen */}
+          <motion.div
+            className="order-1 lg:order-2 flex justify-center lg:justify-end relative"
+            variants={slideInRight}
+          >
+            <div className="relative w-full max-w-2xl">
+              {/* Imagen principal con animaciones mejoradas */}
+              <motion.div
+                className="relative z-10"
+                animate={{
+                  y: [0, -15, 0],
+                }}
+                transition={{
+                  duration: 6,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "easeInOut",
+                  delay: 1,
+                }}
+                whileHover={{
+                  scale: 1.02,
+                  transition: { duration: 0.3 },
+                }}
+              >
+                <div className="relative w-full max-w-md mx-auto">
+                  <motion.div
+                    initial={{ scale: 0, rotate: -10 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{
+                      type: "spring",
+                      damping: 15,
+                      stiffness: 100,
+                      delay: 0.8,
+                    }}
+                  >
+                    <Image
+                      src="/peru/hero/bg-hero.svg"
+                      alt="Educación que transforma vidas - Estudiante con laptop"
+                      width={600}
+                      height={400}
+                      className="w-full h-auto object-contain"
+                      loading="eager"
+                      fetchPriority="high"
+                    />
+                  </motion.div>
+
+                  {/* Formas decorativas con los colores del header */}
+                  <motion.div
+                    className="absolute -top-8 -right-8 w-32 h-32 bg-gradient-to-br from-[#12a9be]/30 to-[#b6d900]/30 rounded-full blur-2xl -z-10"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1.5, duration: 1 }}
+                  />
+                  <motion.div
+                    className="absolute -bottom-8 -left-8 w-40 h-40 bg-gradient-to-br from-[#0d617b]/20 to-[#12a9be]/20 rounded-full blur-2xl -z-10"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 1.8, duration: 1 }}
+                  />
+                  <motion.div
+                    className="absolute top-1/2 -right-4 w-24 h-24 bg-gradient-to-br from-[#b6d900]/25 to-[#12a9be]/25 rounded-full blur-xl -z-10"
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ delay: 2.1, duration: 1 }}
+                  />
+                </div>
+              </motion.div>
+            </div>
+          </motion.div>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

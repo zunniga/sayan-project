@@ -12,6 +12,7 @@ import {
   latestNewsPE
 } from '@/mock/inicio/peru-data';
 
+
 import {
   heroslidesCO,
   testimonialsCO,

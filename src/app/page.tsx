@@ -7,6 +7,7 @@ import { detectUserCountry, getCountryFromCookie } from '@/lib/api/ipapi';
 import { countries } from '@/config/countries';
 import { COUNTRY_DETECTION_CONFIG } from '@/config/country-detection';
 
+
 export default function Home() {
   const router = useRouter();
   const [loadingProgress, setLoadingProgress] = useState(0);
