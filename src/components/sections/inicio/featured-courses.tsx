@@ -50,21 +50,21 @@ export function FeaturedCourses({
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
-            className="text-center mb-20"
+            className="text-center "
             initial={{ opacity: 0, y: -30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
             <motion.div
-              className="inline-block mb-6"
+              className="inline-block "
               initial={{ opacity: 0, scale: 0.5 }}
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true }}
             >
               <motion.div
-                className="text-center mb-16"
+                className="text-center mb-6"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.8, delay: 0.2 }}
@@ -94,10 +94,9 @@ export function FeaturedCourses({
           </motion.div>
 
           {/* Course Grid Component */}
-          <div className="mb-16">
+          <div className="mb-6">
             <CourseGrid countryCode={countryCode} courses={courses} />
           </div>
-
 
           {/* Botón Ver Todos los Cursos */}
           <motion.div

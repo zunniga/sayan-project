@@ -4,6 +4,7 @@ import React from "react";
 import HeroCarousel from "@/components/sections/inicio/hero-carousel";
 import { FeaturedCourses } from "@/components/sections/inicio/featured-courses";
 import { Testimonials } from "@/components/sections/inicio/testimonials";
+import ContactPage from "@/components/pages/contact-page";
 // import { Stats } from "@/components/sections/inicio/stats";
 import { FeaturedDiplomas } from "@/components/sections/inicio/featured-diplomas";
 import { FirstSection } from "@/components/sections/inicio/about-section";
@@ -36,14 +37,14 @@ export default function HomeLayout({
   return (
     <>
       {/* Hero Section - Full screen */}
-      <section className="relative w-full h-screen">
+      <section className="bg-gradient-to-br from-gray-100 via-gray-100 to-gray-100 dark:from-[#0a0f1c]/90 dark:via-[#0a0f1c]/90 dark:to-[#0a0f1c]/90 relative w-full h-screen">
         <HeroCarousel />
       </section>
 
       {/* Rest of content with proper spacing */}
-      <main className="pt-16 pb-16 px-4">
-        <div className="max-w-[1200px] mx-auto space-y-16">
-          <section>
+      <main className="bg-gradient-to-br from-gray-100 via-gray-100 to-gray-100 dark:from-[#0a0f1c]/90 dark:via-[#0a0f1c]/90 dark:to-[#0a0f1c]/90 pt-16 pb-16 px-4">
+        <div className=" max-w-[1200px] mx-auto ">
+          <section className="">
             <FeaturedDiplomas
               countryCode={countryCode}
               graduates={featuredDiplomas}
@@ -55,7 +56,7 @@ export default function HomeLayout({
             <FirstSection />
           </section>
 
-          <section>
+          <section className="">
             <FeaturedCourses
               countryCode={countryCode}
               courses={featuredCourses}
@@ -67,7 +68,10 @@ export default function HomeLayout({
           </section>
 
           {/*CONTACTS */}
-         
+
+          <section>
+            <ContactPage countryCode={countryCode} />
+          </section>
         </div>
       </main>
     </>

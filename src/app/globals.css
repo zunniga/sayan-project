@@ -94,22 +94,25 @@
   /* Gradiente para el modo oscuro con tonos azules de CIMADE */
   :root.dark body,
   body.dark {
-    background: rgb(8, 8, 15) !important;
+    background: rgb(10, 15, 28) !important;
+    /* #0A0F1C */
     background-image:
-      /* Círculo superior derecho - azul principal */
-      radial-gradient(circle at 85% 15%, rgba(12, 14, 99, 0.432) 0%, rgba(30, 90, 200, 0.1) 40%, rgba(0, 0, 0, 0) 70%),
-      /* Círculo inferior izquierdo - azul claro */
-      radial-gradient(circle at 15% 85%, rgba(64, 200, 248, 0.3) 0%, rgba(64, 200, 248, 0.08) 40%, rgba(0, 0, 0, 0) 70%),
+      /* Círculo superior derecho - azul profundo */
+      radial-gradient(circle at 85% 15%, rgba(15, 25, 90, 0.35) 0%, rgba(30, 80, 180, 0.1) 40%, rgba(0, 0, 0, 0) 70%),
+      /* Círculo inferior izquierdo - azul celeste */
+      radial-gradient(circle at 15% 85%, rgba(64, 180, 220, 0.2) 0%, rgba(64, 180, 220, 0.06) 40%, rgba(0, 0, 0, 0) 70%),
       /* Círculo central difuso */
-      radial-gradient(circle at 50% 50%, rgba(44, 114, 255, 0.15) 0%, rgba(0, 0, 0, 0) 60%),
+      radial-gradient(circle at 50% 50%, rgba(44, 114, 255, 0.1) 0%, rgba(0, 0, 0, 0) 60%),
       /* Gradiente base diagonal */
-      linear-gradient(135deg, rgba(10, 25, 60, 0.6) 0%, rgba(5, 15, 40, 0.4) 50%, rgba(15, 35, 80, 0.3) 100%),
-      /* Overlay sutil para profundidad */
-      linear-gradient(45deg, rgba(30, 90, 200, 0.05) 0%, transparent 50%, rgba(64, 200, 248, 0.05) 100%) !important;
+      linear-gradient(135deg, rgba(10, 20, 40, 0.5) 0%, rgba(5, 10, 30, 0.35) 50%, rgba(15, 30, 60, 0.25) 100%),
+      /* Overlay sutil */
+      linear-gradient(45deg, rgba(30, 80, 180, 0.04) 0%, transparent 50%, rgba(64, 180, 220, 0.04) 100%) !important;
+
     background-attachment: fixed !important;
     background-size: 100% 100%, 100% 100%, 120% 120%, 100% 100%, 100% 100% !important;
     color-scheme: dark;
   }
+
 
   /* Gradiente para el modo claro con tonos azules de CIMADE */
   :root:not(.dark) body,
@@ -170,7 +173,7 @@
   }
 
   .dark {
-    --background: 210 30% 5%;
+    --background: 225 38% 8%;
     --foreground: 210 10% 98%;
     --card: 210 30% 8%;
     --card-foreground: 210 10% 98%;

@@ -87,10 +87,10 @@ export const getCountryFromPath = (path: string): CountryConfig => {
 
 // Lista de rutas comunes para todos los países
 export const commonRoutes = [
-  { label: 'Inicio', href: '' },
-  { label: 'Nosotros', href: '/nosotros' },
-  { label: 'Cursos', href: '/cursos' },
-  { label: 'Diplomados', href: '/diplomados' },
-  { label: 'Verificación', href: '/verificacion' },
-  { label: 'Contacto', href: '/contacto' },
+  { label: 'INICIO', href: '' },
+  { label: 'NOSOTROS', href: '/nosotros' },
+  { label: 'CURSOS', href: '/cursos' },
+  { label: 'DIPLOMADOS', href: '/diplomados' },
+  { label: 'VERIFICACION', href: '/verificacion' },
+  { label: 'CONTACTO', href: '/#contacto' },
 ];

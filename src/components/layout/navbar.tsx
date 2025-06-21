@@ -115,7 +115,7 @@ export function Navbar({ countryCode = "" }: { countryCode?: string }) {
                 </motion.div>
 
                 {/* Navegación Desktop */}
-                <nav className="hidden lg:flex items-center space-x-2">
+                <nav className="hidden lg:flex items-center space-x-2 ml-8">
                   {commonRoutes.map((item, index) => {
                     // Construir la URL con el prefijo del país actual
                     const fullHref = item.href === "" ? `/${country}` : `/${country}${item.href}`
@@ -208,9 +208,9 @@ export function Navbar({ countryCode = "" }: { countryCode?: string }) {
                 </motion.div>
 
                 {/* Country Switcher Desktop */}
-                <div className="hidden sm:block relative">
+                {/* <div className="hidden sm:block relative">
                   <CountrySwitcher currentCountryCode={country} size="default" />
-                </div>
+                </div> */}
 
                 {/* Mode Toggle */}
                 <div className="flex-shrink-0 relative">

@@ -66,9 +66,9 @@ export const FirstSection = () => {
 
 
   return (
-    <section className="relative overflow-hidden" ref={ref}>
+    <section id="nosotros" className="relative overflow-hidden" ref={ref}>
      
-      <div className="py-16 lg:py-24 bg-transparent text-gray-900 relative">
+      <div className="bg-transparent text-gray-900 relative">
         {/* Background decorative elements */}
         <motion.div
           className="absolute top-20 left-10 w-32 h-32 bg-[#b6d900]/10 rounded-full blur-xl"

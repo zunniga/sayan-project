@@ -17,7 +17,7 @@ export function FeaturedDiplomas({
   graduates,
 }: FeaturedDiplomasProps) {
   return (
-    <section className="py-24 lg:-mt-20 md:py-32 relative overflow-hidden">
+    <section className="py-24 md:py-32 relative overflow-hidden">
       {/* Floating elements - purple/violet theme para distinguir de cursos */}
       <motion.div
         className="absolute top-20 right-10 w-32 h-32 bg-gradient-to-r from-purple-500/10 to-violet-500/10 rounded-full blur-xl"
@@ -52,14 +52,14 @@ export function FeaturedDiplomas({
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <motion.div
-            className="text-center mb-20"
+            className="text-center"
             initial={{ opacity: 0, y: -30 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
             <motion.div
-              className="text-center mb-16"
+              className="text-center mb-6"
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -86,7 +86,7 @@ export function FeaturedDiplomas({
           </motion.div>
 
           {/* Course Grid Component */}
-          <div className="mb-16">
+          <div className="mb-6">
             <DiplomaGrid countryCode={countryCode} diplomas={graduates} />
           </div>
 

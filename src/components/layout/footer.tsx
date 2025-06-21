@@ -4,13 +4,14 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { countries, commonRoutes } from "@/config/countries";
 import { Mail, Phone, Heart, FileText } from "lucide-react";
-import { SocialIcon } from "@/components/ui/social-icon";
 import { useEffect, useState } from "react";
 import { useTheme } from "next-themes";
+import { FaFacebookF, FaInstagram, FaYoutube, FaTiktok } from "react-icons/fa";
 
 export function Footer({ countryCode = "" }: { countryCode?: string }) {
   const pathname = usePathname();
   const { theme, systemTheme } = useTheme();
+  const currentTheme = theme === "system" ? systemTheme : theme;
   const [logoSrc, setLogoSrc] = useState("/logos/sayan_logo_blue.png");
   // Determinar el código de país
   let currentCountryCode = countryCode;
@@ -36,7 +37,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
 
   return (
     <footer className="relative bg-gray-50 dark:bg-[#0a0f1c] text-gray-900 dark:text-white overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
+      <div className="absolute inset-0 opacity-20">
         <Image
           src="/peru/hero/sayan7.png"
           alt=""
@@ -46,57 +47,9 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
         />
       </div>
       {/* Elementos decorativos de fondo */}
-      <div className="absolute inset-0 opacity-5 dark:opacity-10">
-        <div className="absolute top-0 right-0 w-96 h-96">
-          <svg viewBox="0 0 400 400" className="w-full h-full">
-            <defs>
-              <linearGradient
-                id="grid-gradient"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="100%"
-              >
-                <stop offset="0%" stopColor="#40C8F8" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#1E5AC8" stopOpacity="0.1" />
-              </linearGradient>
-            </defs>
-            {/* Grid pattern */}
-            {Array.from({ length: 20 }).map((_, i) => (
-              <g key={i}>
-                <line
-                  x1={i * 20}
-                  y1="0"
-                  x2={i * 20}
-                  y2="400"
-                  stroke="url(#grid-gradient)"
-                  strokeWidth="0.5"
-                />
-                <line
-                  x1="0"
-                  y1={i * 20}
-                  x2="400"
-                  y2={i * 20}
-                  stroke="url(#grid-gradient)"
-                  strokeWidth="0.5"
-                />
-              </g>
-            ))}
-            {/* Curved lines */}
-            <path
-              d="M 0 200 Q 200 100 400 200 Q 200 300 0 200"
-              fill="none"
-              stroke="url(#grid-gradient)"
-              strokeWidth="1"
-            />
-            <path
-              d="M 100 0 Q 200 200 300 400"
-              fill="none"
-              stroke="url(#grid-gradient)"
-              strokeWidth="1"
-            />
-          </svg>
-        </div>
+       <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-white to-gray-200 rounded-full blur-xl"></div>
+        <div className="absolute bottom-20 right-20 w-24 h-24 bg-gradient-to-r from-white to-gray-200 rounded-full blur-lg"></div>
       </div>
 
       <div className="container mx-auto px-6 py-16 relative z-10">
@@ -236,7 +189,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
             </h3>
 
             {/* Caja destacada para libro de reclamaciones */}
-            <div className="border border-dashed border-[#40C8F8] rounded-lg p-6 mb-8">
+            <div className="border border-dashed border-[#12a9be] rounded-lg p-6 mb-8">
               <div className="flex items-center gap-3 mb-4">
                 <FileText className="w-5 h-5 text-[#40C8F8]" />
                 <span className="font-semibold text-gray-900 dark:text-white text-sm">
@@ -248,7 +201,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
               </p>
               <Link
                 href={`/${currentCountryCode}/libro-de-reclamaciones`}
-                className="inline-block w-full bg-[#40C8F8] hover:bg-[#2C72FF] text-white text-center py-3 px-4 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105"
+                className="inline-block w-full bg-gradient-to-br from-[#0d617b] to-[#12a9be] hover:bg-[#2C72FF] text-white text-center py-3 px-4 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105"
               >
                 Acceder al Libro
               </Link>
@@ -260,19 +213,19 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
             </h4>
 
             {country.socialMedia && (
-              <div className="flex gap-3">
+              <div className="flex space-x-3">
                 {country.socialMedia.facebook && (
                   <a
                     href={country.socialMedia.facebook}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 bg-gray-200 dark:bg-gray-800 hover:bg-[#1877F2] rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+                      currentTheme === "dark"
+                        ? "bg-white/10 text-gray-300 hover:bg-[#b6d900] hover:text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-[#12a9be] hover:text-white"
+                    }`}
                   >
-                    <SocialIcon
-                      type="facebook"
-                      size={18}
-                      className="text-white"
-                    />
+                    <FaFacebookF className="w-4 h-4" />
                   </a>
                 )}
 
@@ -281,13 +234,13 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
                     href={country.socialMedia.instagram}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 bg-gray-200 dark:bg-gray-800 hover:bg-gradient-to-br hover:from-[#E1306C] hover:to-[#FD1D1D] rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+                      currentTheme === "dark"
+                        ? "bg-white/10 text-gray-300 hover:bg-[#b6d900] hover:text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-[#12a9be] hover:text-white"
+                    }`}
                   >
-                    <SocialIcon
-                      type="instagram"
-                      size={18}
-                      className="text-white"
-                    />
+                    <FaInstagram className="w-4 h-4" />
                   </a>
                 )}
 
@@ -296,13 +249,13 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
                     href={country.socialMedia.youtube}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 bg-gray-200 dark:bg-gray-800 hover:bg-[#FF0000] rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+                      currentTheme === "dark"
+                        ? "bg-white/10 text-gray-300 hover:bg-[#b6d900] hover:text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-[#12a9be] hover:text-white"
+                    }`}
                   >
-                    <SocialIcon
-                      type="youtube"
-                      size={18}
-                      className="text-white"
-                    />
+                    <FaYoutube className="w-4 h-4" />
                   </a>
                 )}
 
@@ -311,13 +264,13 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
                     href={country.socialMedia.tiktok}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 bg-gray-200 dark:bg-gray-800 hover:bg-black rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110"
+                    className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 hover:scale-110 ${
+                      currentTheme === "dark"
+                        ? "bg-white/10 text-gray-300 hover:bg-[#b6d900] hover:text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-[#12a9be] hover:text-white"
+                    }`}
                   >
-                    <SocialIcon
-                      type="tiktok"
-                      size={18}
-                      className="text-white"
-                    />
+                    <FaTiktok className="w-4 h-4" />
                   </a>
                 )}
               </div>
