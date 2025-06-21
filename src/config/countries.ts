@@ -46,7 +46,7 @@ export const countries: Record<string, CountryConfig> = {
     currency: 'COP',
     phone: '+57',
     address: 'Bogotá, Colombia',
-    email: 'contacto@cimade.edu.co',
+    email: 'contacto@sayan.edu.co',
     whatsapp: '+57987654321',
     socialMedia: {
       facebook: 'https://www.facebook.com/CimadeEC',

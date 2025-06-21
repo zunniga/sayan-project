@@ -94,10 +94,10 @@
   /* Gradiente para el modo oscuro con tonos azules de CIMADE */
   :root.dark body,
   body.dark {
-    background: rgb(10, 10, 20) !important;
+    background: rgb(8, 8, 15) !important;
     background-image:
       /* Círculo superior derecho - azul principal */
-      radial-gradient(circle at 85% 15%, rgba(30, 90, 200, 0.4) 0%, rgba(30, 90, 200, 0.1) 40%, rgba(0, 0, 0, 0) 70%),
+      radial-gradient(circle at 85% 15%, rgba(12, 14, 99, 0.432) 0%, rgba(30, 90, 200, 0.1) 40%, rgba(0, 0, 0, 0) 70%),
       /* Círculo inferior izquierdo - azul claro */
       radial-gradient(circle at 15% 85%, rgba(64, 200, 248, 0.3) 0%, rgba(64, 200, 248, 0.08) 40%, rgba(0, 0, 0, 0) 70%),
       /* Círculo central difuso */
