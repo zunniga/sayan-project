@@ -1,5 +1,5 @@
 import { CountryParams, generateStaticParams } from "../page.params";
-import VerificationPage from "@/components/pages/verification-page";
+import { VerificationPage } from "@/components/pages/verification-page";
 import VeryCertsMessage from "@/components/pages/verycerts-message";
 
 // Exportamos esta función para generar rutas estáticas

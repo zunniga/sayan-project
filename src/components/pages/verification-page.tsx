@@ -1,238 +1,580 @@
 "use client";
 
-import React, { useState } from "react";
-import { motion } from "framer-motion";
-import { Search, RotateCcw, ShieldCheck } from "lucide-react";
+import { useState, useEffect, useCallback } from "react";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { SearchButton } from "@/components/sections/verification/search-button";
+import { SearchInput } from "@/components/sections/verification/search-input";
+import { ClearButton } from "@/components/sections/verification/clear-button";
+import { SearchStatus } from "@/components/sections/verification/search-status";
+import { CertificatesModal } from "@/components/sections/verification/modals/CertificatesModal";
+import { CertificateViewModal } from "@/components/sections/verification/modals/CertificateViewModal";
+import { ErrorModal } from "@/components/sections/verification/error-modal";
+import { RefreshCw } from "lucide-react";
+import {
+  searchCertificateByDocument,
+  searchCertificateByCode, 
+  searchCertificateByName,
+  searchCertificateByQr
+} from "@/lib/api/verification";
+import type { 
+  CertificateSearchResponse, 
+  CertificateByCodeResponse, 
+  CertificateByQrResponse,
+  Certificate
+} from "@/types/verification";
+import { addCodePrefix } from "@/utils/format";
+import Image from "next/image";
 
-export default function VerificationPage() {
-  const [captchaCode, setCaptchaCode] = useState(() => {
-    return Math.random().toString(36).substring(2, 6).toUpperCase();
-  }
-  );
+export type SearchType = "dni" | "code" | "name";
 
-  const [searchForm, setSearchForm] = useState({
-    documentNumber: "",
-    certificateCode: "",
-    fullName: "",
-    captcha: ""
-  });
-  
-  const [activeTab, setActiveTab] = useState("document");
-
-  const refreshCaptcha = () => {
-    setSearchForm({ ...searchForm, captcha: "" });
-    const newCaptcha = Math.random().toString(36).substring(2, 6).toUpperCase();
-    // Update the captcha code state
-    setCaptchaCode(newCaptcha);
+// Definir tipos para los errores de API
+interface ApiError {
+  response?: {
+    status: number;
+    data?: {
+      message?: string;
+    };
   };
+  message: string;
+}
+
+// Función para verificar si un error es del tipo ApiError
+function isApiError(error: unknown): error is ApiError {
+  return (
+    typeof error === 'object' &&
+    error !== null &&
+    'message' in error &&
+    typeof (error as ApiError).message === 'string'
+  );
+}
+
+// Función para manejar errores de manera consistente
+function handleApiError(error: unknown): string {
+  if (isApiError(error)) {
+    if (error.response?.status === 404) {
+      return "No se encontraron certificados con los datos proporcionados.";
+    } else if (error.response?.status === 400) {
+      return "Los datos proporcionados no son válidos.";
+    } else if (error.response?.status === 500) {
+      return "Ocurrió un error interno en el servidor. Por favor, inténtelo más tarde.";
+    } else {
+      return error.message || "Ocurrió un error durante la búsqueda.";
+    }
+  } else if (error instanceof Error) {
+    return error.message;
+  } else {
+    return "Ocurrió un error inesperado.";
+  }
+}
+
+export function VerificationPage() {
+  const searchParams = useSearchParams();
+  const pathname = usePathname();
+  const router = useRouter();
+
+  // Estados del formulario
+  const [activeTab, setActiveTab] = useState<SearchType>("dni");
+  const [searchValue, setSearchValue] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  // Estados para resultados
+  const [singleResult, setSingleResult] = useState<CertificateByCodeResponse | CertificateByQrResponse | null>(null);
+  const [participantResult, setParticipantResult] = useState<CertificateSearchResponse | null>(null);
+
+  // Estados para modales
+  const [showCertificatesModal, setShowCertificatesModal] = useState(false);
+  const [showCertificateViewModal, setShowCertificateViewModal] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [isViewingSingleFromList, setIsViewingSingleFromList] = useState(false);
+
+  // Estados para acceso directo y CAPTCHA
+  const [isDirectAccess, setIsDirectAccess] = useState(false);
+  const [captchaCode, setCaptchaCode] = useState("");
+  const [captchaInput, setCaptchaInput] = useState("");
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+
+  // Función para extraer UUID de la URL
+  const extractUuidFromPath = useCallback((): string | null => {
+    const segments = pathname.split("/");
+    const lastSegment = segments[segments.length - 1];
+
+    // Verificar si es un UUID con prefijo very-
+    if (lastSegment && lastSegment.startsWith("very-")) {
+      const uuid = lastSegment.replace("very-", "");
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (uuidRegex.test(uuid)) {
+        return uuid;
+      }
+    }
+
+    // Verificar si es un UUID normal
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (lastSegment && lastSegment !== "verify" && uuidRegex.test(lastSegment)) {
+      return lastSegment;
+    }
+
+    // Verificar parámetro de la URL
+    const uuidParam = searchParams.get("uuid") || searchParams.get("code");
+    if (uuidParam) {
+      return uuidParam;
+    }
+
+    return null;
+  }, [pathname, searchParams]);
+
+  // Generar código CAPTCHA
+  const generateCaptchaCode = useCallback(() => {
+    const characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+    let result = "";
+    for (let i = 0; i < 5; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    setCaptchaCode(result);
+    setCaptchaInput("");
+    setCaptchaVerified(false);
+  }, []);
+
+  // Verificar CAPTCHA
+  const verifyCaptcha = useCallback((): boolean => {
+    if (isDirectAccess) return true;
+    
+    if (captchaInput.toUpperCase() === captchaCode) {
+      setCaptchaVerified(true);
+      return true;
+    } else {
+      setCaptchaVerified(false);
+      setError("El código de verificación es incorrecto. Por favor, inténtalo de nuevo.");
+      generateCaptchaCode();
+      return false;
+    }
+  }, [captchaInput, captchaCode, isDirectAccess, generateCaptchaCode]);
+
+  // Validar entrada
+  const validateInput = useCallback((): boolean => {
+    switch (activeTab) {
+      case "dni":
+        if (searchValue.length < 5) {
+          setError("El documento de identidad debe tener al menos 5 caracteres");
+          return false;
+        }
+        if (searchValue.length > 20) {
+          setError("El documento de identidad no puede exceder 20 caracteres");
+          return false;
+        }
+        break;
+      case "code":
+        if (searchValue.length < 4) {
+          setError("El código debe tener al menos 4 caracteres");
+          return false;
+        }
+        break;
+      case "name":
+        if (searchValue.length < 3) {
+          setError("Ingresa al menos 3 caracteres");
+          return false;
+        }
+        break;
+    }
+    setError("");
+    return true;
+  }, [activeTab, searchValue]);
+
+  // Limpiar estados de resultados
+  const resetSearchStates = useCallback(() => {
+    setSingleResult(null);
+    setParticipantResult(null);
+    setShowCertificatesModal(false);
+    setShowCertificateViewModal(false);
+  }, []);
+
+  // Manejar búsqueda directa con UUID
+  const handleDirectSearchWithUuid = useCallback(async (uuid: string) => {
+    setLoading(true);
+    setError("");
+    resetSearchStates();
+
+    try {
+      const result = await searchCertificateByQr({ qrCode: uuid });
+      setSingleResult(result);
+      setShowCertificateViewModal(true);
+    } catch (error: unknown) {
+      console.error("Error en la búsqueda directa por UUID:", error);
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
+      setShowErrorModal(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [resetSearchStates]);
+
+  // Procesar y mostrar resultados
+  const processAndDisplayResults = useCallback((result: CertificateSearchResponse | CertificateByCodeResponse | CertificateByQrResponse) => {
+    if ('certificates' in result) {
+      // Es un resultado de búsqueda por documento o nombre (múltiples certificados)
+      setParticipantResult(result);
+      setShowCertificatesModal(true);
+    } else {
+      // Es un resultado de búsqueda por código (certificado único)
+      setSingleResult(result);
+      setShowCertificateViewModal(true);
+    }
+    generateCaptchaCode();
+  }, [generateCaptchaCode]);
+
+  // Manejar búsqueda principal
+  const handleSearch = useCallback(async () => {
+    if (!searchValue.trim()) return;
+    if (!isDirectAccess && !verifyCaptcha()) {
+      setShowErrorModal(true);
+      return;
+    }
+    if (!validateInput()) {
+      setShowErrorModal(true);
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+    resetSearchStates();
+
+    try {
+      let result;
+      
+      switch (activeTab) {
+        case "dni":
+          result = await searchCertificateByDocument({ documentNumber: searchValue });
+          break;
+        case "code":
+          result = await searchCertificateByCode({ code: addCodePrefix(searchValue) });
+          break;
+        case "name":
+          result = await searchCertificateByName({ fullName: searchValue });
+          break;
+        default:
+          throw new Error("Tipo de búsqueda no válido");
+      }
+
+      processAndDisplayResults(result);
+    } catch (error: unknown) {
+      console.error("Error en la búsqueda:", error);
+      const errorMessage = handleApiError(error);
+      setError(errorMessage);
+      setShowErrorModal(true);
+      generateCaptchaCode();
+    } finally {
+      setLoading(false);
+    }
+  }, [
+    searchValue,
+    isDirectAccess,
+    verifyCaptcha,
+    validateInput,
+    resetSearchStates,
+    activeTab,
+    processAndDisplayResults,
+    generateCaptchaCode
+  ]);
+
+  // Inicialización al cargar la página
+  useEffect(() => {
+    generateCaptchaCode();
+    const uuid = extractUuidFromPath();
+    if (uuid) {
+      setIsDirectAccess(true);
+      setCaptchaVerified(true);
+      setActiveTab("code");
+      setSearchValue(uuid);
+      setTimeout(() => {
+        handleDirectSearchWithUuid(uuid);
+      }, 500);
+    } else {
+      setIsDirectAccess(false);
+    }
+  }, [pathname, searchParams, extractUuidFromPath, handleDirectSearchWithUuid, generateCaptchaCode]);
+
+  // Limpiar al cambiar de pestaña
+  useEffect(() => {
+    setSearchValue("");
+    setError("");
+  }, [activeTab]);
+
+  // Manejar tecla Enter
+  const handleKeyPress = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && searchValue.trim() && !loading) {
+      handleSearch();
+    }
+  }, [searchValue, loading, handleSearch]);
+
+  // Manejar cambio en input CAPTCHA
+  const handleCaptchaInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toUpperCase().slice(0, 5);
+    setCaptchaInput(value);
+  }, []);
+
+  // Limpiar formulario
+  const handleClear = useCallback(() => {
+    setSearchValue("");
+    setCaptchaInput("");
+    setCaptchaVerified(false);
+    setError("");
+    resetSearchStates();
+    generateCaptchaCode();
+  }, [resetSearchStates, generateCaptchaCode]);
+
+  // Manejar cierre de modales
+  const handleCloseModalsAndRefreshCaptcha = useCallback(() => {
+    if (!isDirectAccess) {
+      generateCaptchaCode();
+    }
+  }, [isDirectAccess, generateCaptchaCode]);
+
+  const handleCertificateViewModalClose = useCallback(() => {
+    setShowCertificateViewModal(false);
+    setSingleResult(null);
+
+    if (isViewingSingleFromList) {
+      setShowCertificatesModal(true);
+      setIsViewingSingleFromList(false);
+    } else {
+      if (isDirectAccess) {
+        router.replace("/certs");
+        setIsDirectAccess(false);
+      }
+      handleCloseModalsAndRefreshCaptcha();
+    }
+  }, [isViewingSingleFromList, isDirectAccess, router, handleCloseModalsAndRefreshCaptcha]);
+
+  const handleCertificatesModalClose = useCallback(() => {
+    setShowCertificatesModal(false);
+    setParticipantResult(null);
+    setIsViewingSingleFromList(false);
+    handleCloseModalsAndRefreshCaptcha();
+  }, [handleCloseModalsAndRefreshCaptcha]);
+
+  const handleViewSingleCertificate = useCallback((certificate: Certificate) => {
+    if (participantResult) {
+      setShowCertificatesModal(false);
+      setIsViewingSingleFromList(true);
+      
+      // Crear un objeto similar al resultado de código único según la estructura real
+      const singleCertResult: CertificateByCodeResponse = {
+        id: certificate.id,
+        code: certificate.code,
+        createdAt: certificate.createdAt,
+        participant: {
+          id: participantResult.id,
+          document_number: participantResult.document_number,
+          full_name: participantResult.full_name
+        },
+        event: certificate.event
+      };
+      
+      setSingleResult(singleCertResult);
+      setShowCertificateViewModal(true);
+    }
+  }, [participantResult]);
 
   return (
-    <main className="pt-32 pb-16 px-4 min-h-screen">
-      <div className="w-full max-w-[1200px] mx-auto">
+    <section className="relative bg-gradient-to-br from-gray-100 via-gray-100 to-gray-100 dark:from-[#0a0f1c] dark:via-[#0a0f1c] dark:to-[#0a0f1c] min-h-[calc(100vh)] flex flex-col justify-center items-center transition-colors duration-300 py-32 md:py-30">
+      <div className="absolute inset-0 opacity-50">
+              <Image
+                src="/peru/hero/cyan3.png"
+                alt=""
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+      <div className="w-full max-w-[1200px] mx-auto px-4">
         <div className="max-w-3xl mx-auto">
-          {/* Header */}
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8">
-              <span className="text-gray-900 dark:text-white">
-                VERIFICA TU{" "}
-              </span>
-              <span className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-400 dark:to-blue-500 bg-clip-text text-transparent">
-                CERTIFICADO
-              </span>
+          <div className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl lg:text-5xl font-bold mb-6">
+              <span className="text-gray-900 dark:text-white">VERIFICA TU </span>
+              <span className="bg-gradient-to-r from-[#12a9be] to-[#0d617b]  bg-clip-text text-transparent">CERTIFICADO</span>
             </h1>
-
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto leading-relaxed">
+            <p className="text-gray-600 dark:text-gray-400 text-lg">
               Verifica la autenticidad de tu certificado ingresando tu número de
               documento de identidad, código de certificado o nombres y apellidos.
             </p>
-          </motion.div>
+          </div>
 
-          {/* Main Container */}
-          <motion.div
-            className="relative"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-          >
-            {/* Enhanced Glow Effect */}
-            <div className="absolute -inset-6 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-blue-600/10 dark:from-blue-400/5 dark:via-purple-400/5 dark:to-blue-500/5 rounded-[3rem] blur-3xl opacity-70" />
-            
-            {/* Secondary Glow */}
-            <div className="absolute -inset-2 bg-gradient-to-r from-blue-400/20 to-blue-600/20 dark:from-blue-300/10 dark:to-blue-500/10 rounded-[2rem] blur-xl opacity-50" />
+          <div className="relative">
+            <div className="absolute -inset-4 bg-gradient-to-r from-[#00D1FF]/20 to-[#2563EB]/20 dark:from-[#ffff]/20 dark:to-[#ffff]/20 rounded-[2rem] blur-2xl opacity-50" />
 
-            {/* Card */}
-            <div className="relative bg-white/80 dark:bg-gray-800/80 backdrop-blur-xl rounded-3xl border border-gray-200/60 dark:border-gray-700/60 shadow-2xl dark:shadow-[0_25px_50px_-12px_rgba(0,0,0,0.5)]">
-              {/* Animated Top Border */}
-              <div className="absolute -top-0.5 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500 dark:via-blue-400 to-transparent rounded-t-3xl" />
+            <div className="relative bg-white dark:bg-[#0A0F1C] rounded-2xl border border-gray-200/50 dark:border-gray-800/50 shadow-[0_8px_40px_-12px_rgba(0,0,0,0.1)] dark:shadow-[0_8px_40px_-12px_rgba(0,0,0,0.3)] backdrop-blur-xl">
+              <div className="absolute -top-1 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 dark:via-primary/50 to-transparent" />
 
-              <div className="p-10 md:p-12">
-                <Tabs defaultValue="document" value={activeTab} className="w-full" onValueChange={setActiveTab}>
-                  {/* Buscar por - Enhanced */}
-                  <div className="flex justify-center items-center mb-10">
+              <div className="p-8 md:p-10">
+                <Tabs
+                  defaultValue="dni"
+                  value={activeTab}
+                  className="w-full"
+                  onValueChange={(value) => setActiveTab(value as SearchType)}
+                >
+                  <div className="flex justify-center items-center mb-6">
                     <span className="relative inline-block">
-                      <span className="text-2xl font-bold text-gray-800 dark:text-gray-200">
+                      <span className="text-xl font-semibold text-gray-700 dark:text-gray-300">
                         Buscar por
                       </span>
-                      <span className="text-2xl font-bold text-blue-600 dark:text-blue-400 ml-1">
-                        :
-                      </span>
-                      <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-16 h-1 bg-gradient-to-r from-blue-500 to-blue-600 dark:from-blue-400 dark:to-blue-500 rounded-full" />
+                      <span className="text-xl font-semibold text-primary dark:text-primary">:</span>
+                      <div className="absolute -bottom-2 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-primary/50 dark:via-primary/50 to-transparent" />
                     </span>
                   </div>
 
-                  {/* Enhanced Tabs */}
-                  <TabsList className="w-full h-auto mx-auto mb-10 bg-gray-100/70 dark:bg-gray-700/70 border border-gray-200/60 dark:border-gray-600/60 rounded-2xl p-2 backdrop-blur-sm grid grid-cols-1 md:grid-cols-3 gap-2">
+                  <TabsList className="w-full h-auto mx-auto mb-4 bg-gray-100/50 dark:bg-[#1E293B]/80 border border-gray-200/50 dark:border-gray-800/50 rounded-xl p-1.5 backdrop-blur-sm flex md:flex-row flex-col gap-1.5">
                     <TabsTrigger
-                      value="document"
-                      className="rounded-xl py-4 px-6 text-sm font-semibold data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-lg transition-all duration-300 hover:scale-105"
+                      value="dni"
+                      className="flex-1 rounded-2xl py-2.5 text-sm font-medium data-[state=active]:bg-gradient-to-br from-[#0d617b] to-[#12a9be] dark:data-[state=active]:bg-gradient-to-br dark:from-[#0d617b] dark:to-[#12a9be] data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 w-full cursor-pointer"
                     >
                       Documento de identidad
                     </TabsTrigger>
-                    <TabsTrigger
-                      value="certificate"
-                      className="rounded-xl py-4 px-6 text-sm font-semibold data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-lg transition-all duration-300 hover:scale-105"
+                    <TabsTrigger 
+                      value="code"
+                      className="flex-1 rounded-2xl py-2.5 text-sm font-medium data-[state=active]:bg-gradient-to-br from-[#0d617b] to-[#12a9be] dark:data-[state=active]:bg-gradient-to-br dark:from-[#0d617b] dark:to-[#12a9be] data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 w-full cursor-pointer"
                     >
                       Código de Certificado
                     </TabsTrigger>
                     <TabsTrigger
                       value="name"
-                      className="rounded-xl py-4 px-6 text-sm font-semibold data-[state=active]:bg-white dark:data-[state=active]:bg-gray-800 data-[state=active]:text-blue-600 dark:data-[state=active]:text-blue-400 data-[state=active]:shadow-lg transition-all duration-300 hover:scale-105"
+                      className="flex-1 rounded-2xl py-2.5 text-sm font-medium data-[state=active]:bg-gradient-to-br from-[#0d617b] to-[#12a9be] dark:data-[state=active]:bg-gradient-to-br dark:from-[#0d617b] dark:to-[#12a9be] data-[state=active]:text-white dark:data-[state=active]:text-white data-[state=active]:shadow-sm transition-all duration-200 w-full cursor-pointer"
                     >
                       Nombres y apellidos
                     </TabsTrigger>
                   </TabsList>
 
-                  {/* Enhanced Content */}
-                  <div className="relative mb-8">
-                    {/* Document Search */}
-                    <TabsContent value="document" className="space-y-6">
-                      <div className="flex gap-4">
-                        <input
-                          type="text"
-                          value={searchForm.documentNumber}
-                          onChange={(e) => setSearchForm({...searchForm, documentNumber: e.target.value})}
-                          className="flex-1 px-6 py-4 bg-gray-50/80 dark:bg-gray-700/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-3 focus:ring-blue-500/30 dark:focus:ring-blue-400/30 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-300 text-lg backdrop-blur-sm"
-                          placeholder="Ingresa tu número de documento de identidad"
-                        />
-                        <motion.button 
-                          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Search className="w-5 h-5" />
-                        </motion.button>
-                      </div>
+                  <div className="relative space-y-0">
+                    <TabsContent value="dni" className="space-y-4">
+                      <SearchInput
+                        placeholder="Ingrese su número de DNI"
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                        error={error}
+                        disabled={loading}
+                      />
                     </TabsContent>
 
-                    {/* Certificate Search */}
-                    <TabsContent value="certificate" className="space-y-6">
-                      <div className="flex gap-4">
-                        <input
-                          type="text"
-                          value={searchForm.certificateCode}
-                          onChange={(e) => setSearchForm({...searchForm, certificateCode: e.target.value})}
-                          className="flex-1 px-6 py-4 bg-gray-50/80 dark:bg-gray-700/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-3 focus:ring-blue-500/30 dark:focus:ring-blue-400/30 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-300 text-lg backdrop-blur-sm"
-                          placeholder="Ingresa el código del certificado"
-                        />
-                        <motion.button 
-                          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Search className="w-5 h-5" />
-                        </motion.button>
-                      </div>
+                    <TabsContent value="code" className="space-y-4">
+                      <SearchInput
+                        placeholder="Ingrese el código del certificado"
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                        error={error}
+                        disabled={loading}
+                      />
                     </TabsContent>
 
-                    {/* Name Search */}
-                    <TabsContent value="name" className="space-y-6">
-                      <div className="flex gap-4">
-                        <input
-                          type="text"
-                          value={searchForm.fullName}
-                          onChange={(e) => setSearchForm({...searchForm, fullName: e.target.value})}
-                          className="flex-1 px-6 py-4 bg-gray-50/80 dark:bg-gray-700/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-3 focus:ring-blue-500/30 dark:focus:ring-blue-400/30 focus:border-blue-500 dark:focus:border-blue-400 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 transition-all duration-300 text-lg backdrop-blur-sm"
-                          placeholder="Ingresa tus nombres y apellidos"
-                        />
-                        <motion.button 
-                          className="px-8 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl font-semibold transition-all duration-300 flex items-center gap-3 shadow-lg hover:shadow-xl transform hover:scale-105"
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          <Search className="w-5 h-5" />
-                        </motion.button>
-                      </div>
+                    <TabsContent value="name" className="space-y-4">
+                      <SearchInput
+                        placeholder="Ingrese sus nombres y apellidos"
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                        onKeyDown={handleKeyPress}
+                        error={error}
+                        disabled={loading}
+                      />
                     </TabsContent>
                   </div>
 
-                  {/* Enhanced Captcha */}
-                  <div className="mt-8">
-                    <div className="flex flex-row gap-4 max-w-lg mx-auto">
-                      {/* Captcha Code */}
-                      <div className="w-1/2 bg-gradient-to-r from-blue-600 to-blue-700 dark:from-blue-500 dark:to-blue-600 rounded-xl overflow-hidden relative shadow-lg">
-                        <div className="relative w-full flex items-center justify-center py-4">
-                          <div className="flex justify-center items-center select-none">
-                            <div className="text-white font-bold text-3xl tracking-[0.3em] select-none">
-                              {captchaCode}
-                            </div>
+                  {!extractUuidFromPath() && (
+                    <div className="mt-4">
+                      <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-stretch sm:items-center">
+                        <div className="flex-1">
+                          <div className="relative">
+                            <input
+                              type="text"
+                              placeholder="Ingrese el código"
+                              value={captchaInput}
+                              onChange={handleCaptchaInputChange}
+                              onKeyDown={handleKeyPress}
+                              className="w-full h-12 px-4 rounded-2xl bg-gray-50 dark:bg-zinc-900/50 border border-gray-400 dark:border-gray-600 placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary text-slate-700 dark:text-slate-200 text-center text-base transition-all duration-300"
+                              maxLength={5}
+                              autoComplete="off"
+                              disabled={loading}
+                            />
                           </div>
-                          <motion.button
-                            onClick={refreshCaptcha}
-                            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white/80 hover:text-white transition-colors p-2 rounded-full hover:bg-white/10"
-                            aria-label="Refrescar código"
-                            type="button"
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                          >
-                            <RotateCcw className="h-5 w-5" />
-                          </motion.button>
                         </div>
-                      </div>
 
-                      {/* Captcha Input */}
-                      <div className="w-1/2">
-                        <div className="relative h-full">
-                          <input
-                            type="text"
-                            placeholder="Ingrese el código"
-                            value={searchForm.captcha}
-                            onChange={(e) => setSearchForm({...searchForm, captcha: e.target.value})}
-                            className="w-full h-full px-4 py-4 text-center text-lg bg-gray-50/80 dark:bg-gray-700/80 border border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-3 focus:ring-blue-500/30 dark:focus:ring-blue-400/30 focus:border-blue-500 dark:focus:border-blue-400 text-gray-800 dark:text-white placeholder-gray-400 backdrop-blur-sm font-semibold tracking-wider"
-                            maxLength={5}
-                            autoComplete="off"
-                          />
-                          <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 dark:text-gray-500">
-                            <ShieldCheck className="h-5 w-5" />
+                        <div className="w-full sm:w-44">
+                          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#0d617b] to-[#12a9be] dark:from-[#0d617b] dark:to-[#12a9be] h-12">
+                            <div className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"></div>
+                            <div className="relative flex items-center justify-between px-4 sm:px-6 h-full">
+                              <div className="text-white font-bold text-xl sm:text-xl tracking-widest select-none flex-1 text-center">
+                                {captchaCode}
+                              </div>
+                              <button
+                                onClick={(e) => {
+                                  e.preventDefault();
+                                  generateCaptchaCode();
+                                }}
+                                className="text-white/80 hover:text-white transition-all duration-300 p-1.5 sm:p-2.5 rounded-xl hover:bg-white/15 ml-2 sm:ml-3 flex-shrink-0 hover:scale-110 active:scale-95 cursor-pointer"
+                                aria-label="Refrescar código"
+                                type="button"
+                                disabled={loading}
+                              >
+                                <RefreshCw className="h-4 w-4 sm:h-5 sm:w-5" />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
+                  )}
 
-                    {/* Enhanced Help Text */}
-                    <motion.div 
-                      className="text-sm text-gray-600 dark:text-gray-400 mt-4 text-center flex items-center justify-center gap-2 bg-blue-50/50 dark:bg-blue-900/20 px-6 py-3 rounded-xl mx-auto max-w-lg"
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.5 }}
-                    >
-                      <ShieldCheck className="h-4 w-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                      <span>
-                        Ingrese el código exactamente como aparece para verificar que no es un robot
-                      </span>
-                    </motion.div>
+                  <div className="flex gap-4 mt-8 mb-6 max-w-sm mx-auto w-full">
+                    <SearchButton
+                      
+                      onClick={handleSearch}
+                      disabled={!searchValue.trim() || !captchaInput.trim() || loading}
+                      loading={loading}
+                    />
+                    <ClearButton
+                      onClick={handleClear}
+                      disabled={!searchValue.trim() && !captchaInput.trim()}
+                    />
                   </div>
+
+                  <SearchStatus loading={loading} error={error} />
+
+                  {captchaVerified && (
+                    <div className="text-center text-sm text-gray-500 dark:text-gray-400 pt-2">
+                      {isDirectAccess
+                        ? "Búsqueda directa por código QR"
+                        : "Listo para buscar certificados..."}
+                    </div>
+                  )}
                 </Tabs>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
-    </main>
+
+      {/* Modales */}
+      <CertificatesModal
+        isOpen={showCertificatesModal}
+        onClose={handleCertificatesModalClose}
+        participantResult={participantResult}
+        onViewCertificate={handleViewSingleCertificate}
+      />
+
+      <CertificateViewModal
+        isOpen={showCertificateViewModal}
+        onClose={handleCertificateViewModalClose}
+        certificate={singleResult}
+      />
+
+      <ErrorModal
+        isOpen={showErrorModal}
+        onClose={() => {
+          setShowErrorModal(false);
+          handleCloseModalsAndRefreshCaptcha();
+        }}
+        message={error}
+      />
+    </section>
   );
 }

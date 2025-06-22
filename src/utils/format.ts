@@ -70,3 +70,35 @@ export function formatDate(date: Date | string): string {
         { locale: es }
     );
 }
+
+/**
+ * Formatea un código de certificado eliminando el prefijo "C" si existe
+ * @param code - Código del certificado
+ * @returns Código formateado sin el prefijo "C"
+ */
+export function formatCertificateCode(code: string): string {
+  if (!code) return "N/A";
+  
+  // Si el código empieza con "C", quitarlo
+  if (code.startsWith('B') || code.startsWith('b')) {
+    return code.substring(1);
+  }
+  
+  return code;
+}
+
+/**
+ * Agrega el prefijo "C" al código del certificado si no lo tiene
+ * @param code - Código del certificado
+ * @returns Código con el prefijo "C" agregado si es necesario
+ */
+export function addCodePrefix(code: string): string {
+  if (!code) return code;
+  
+  // Si el código NO empieza con "C", agregarlo para la API
+  if (!code.startsWith('B') && !code.startsWith('b')) {
+    return `B${code}`;
+  }
+  
+  return code;
+}

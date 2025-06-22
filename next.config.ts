@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "backunp.auladm.com",
       },
+       {
+        protocol: "https",
+        hostname: "verycerts.sfo3.digitaloceanspaces.com",
+      },
     ],
   },
 };
