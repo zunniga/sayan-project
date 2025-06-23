@@ -151,35 +151,27 @@ function DiplomaCard({
   )
 }
 
-export function DiplomaGrid({ countryCode, diplomas, viewMode = "grid" }: DiplomaGridProps) {
-  const [currentSlide, setCurrentSlide] = useState(0)
-  const [isHovered, setIsHovered] = useState(false)
-  const [diplomaGroups, setDiplomaGroups] = useState<GraduateData[][]>([])
+export function DiplomaGridMain({ countryCode, diplomas, viewMode = "grid" }: DiplomaGridProps) {
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 6 // 6 diplomas por página (2 filas de 3)
   const [isReady, setIsReady] = useState(false)
 
   // Todos los hooks deben estar aquí, antes de cualquier lógica condicional
   useEffect(() => {
-    if (diplomas && Array.isArray(diplomas) && diplomas.length > 0) {
-      const groups = []
-      for (let i = 0; i < diplomas.length; i += 3) {
-        groups.push(diplomas.slice(i, i + 3))
-      }
-      setDiplomaGroups(groups)
-      setIsReady(true)
-    } else {
-      setIsReady(true) // También marcar como ready si no hay diplomas
-    }
+    setIsReady(true) // Simplificar ya que no necesitamos grupos
   }, [diplomas])
 
-  // Autoplay solo para vista de rejilla
-  useEffect(() => {
-    if (viewMode === "grid" && !isHovered && diplomaGroups.length > 1) {
-      const interval = setInterval(() => {
-        setCurrentSlide((prev) => (prev + 1) % diplomaGroups.length)
-      }, 4000)
-      return () => clearInterval(interval)
-    }
-  }, [isHovered, diplomaGroups.length, viewMode])
+  const totalPages = Math.ceil(diplomas.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const currentDiplomas = diplomas.slice(startIndex, startIndex + itemsPerPage)
+
+  const nextPage = () => {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+  }
+
+  const prevPage = () => {
+    setCurrentPage((prev) => Math.max(prev - 1, 1))
+  }
 
   const container = {
     hidden: { opacity: 0 },
@@ -190,14 +182,6 @@ export function DiplomaGrid({ countryCode, diplomas, viewMode = "grid" }: Diplom
         delayChildren: 0.3,
       },
     },
-  }
-
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % diplomaGroups.length)
-  }
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + diplomaGroups.length) % diplomaGroups.length)
   }
 
   // Verificar si no hay diplomas
@@ -244,68 +228,62 @@ export function DiplomaGrid({ countryCode, diplomas, viewMode = "grid" }: Diplom
 
   // Renderizar vista de rejilla (carrusel)
   return (
-    <motion.div
-      variants={container}
-      initial="hidden"
-      animate="show"
-      className="relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="overflow-hidden">
-        <motion.div
-          className="flex"
-          animate={{ x: `-${currentSlide * 100}%` }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
-        >
-          {diplomaGroups.map((group, groupIndex) => (
-            <div key={groupIndex} className="w-full flex-shrink-0">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {group.map((diploma, index) => (
-                  <DiplomaCard
-                    key={diploma.id}
-                    diploma={diploma}
-                    index={groupIndex * 3 + index}
-                    countryCode={countryCode}
-                    isListView={false}
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </motion.div>
+    <motion.div variants={container} initial="hidden" animate="show" className="relative">
+      {/* Grid simple sin carrusel */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {currentDiplomas.map((diploma, index) => (
+          <DiplomaCard
+            key={diploma.id}
+            diploma={diploma}
+            index={startIndex + index}
+            countryCode={countryCode}
+            isListView={false}
+          />
+        ))}
       </div>
 
-      {/* Botones de navegación */}
-      {diplomaGroups.length > 1 && (
-        <>
+      {/* Paginación */}
+      {totalPages > 1 && (
+        <div className="flex justify-center items-center mt-12 space-x-4">
           <button
-            onClick={prevSlide}
-            className="absolute left-4 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#0d617b] to-[#12a9be] hover:from-[#0d617b]/90 hover:to-[#12a9be]/90 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-10"
+            onClick={prevPage}
+            disabled={currentPage === 1}
+            className="bg-gradient-to-r from-[#0d617b] to-[#12a9be] hover:from-[#0d617b]/90 hover:to-[#12a9be]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
+
+          <div className="flex items-center space-x-2">
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`w-10 h-10 rounded-full font-bold transition-all duration-300 ${
+                  page === currentPage
+                    ? "bg-gradient-to-r from-[#0d617b] to-[#12a9be] text-white"
+                    : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+          </div>
+
           <button
-            onClick={nextSlide}
-            className="absolute right-4 top-1/2 -translate-y-1/2 bg-gradient-to-r from-[#0d617b] to-[#12a9be] hover:from-[#0d617b]/90 hover:to-[#12a9be]/90 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-10"
+            onClick={nextPage}
+            disabled={currentPage === totalPages}
+            className="bg-gradient-to-r from-[#0d617b] to-[#12a9be] hover:from-[#0d617b]/90 hover:to-[#12a9be]/90 disabled:opacity-50 disabled:cursor-not-allowed text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300"
           >
             <ChevronRight className="w-6 h-6" />
           </button>
-        </>
+        </div>
       )}
 
-      {/* Indicadores */}
-      {diplomaGroups.length > 1 && (
-        <div className="flex justify-center mt-8 space-x-2">
-          {diplomaGroups.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentSlide(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentSlide ? "bg-gradient-to-r from-[#0d617b] to-[#12a9be]" : "bg-gray-300 dark:bg-gray-600"
-              }`}
-            />
-          ))}
+      {/* Info de paginación */}
+      {totalPages > 1 && (
+        <div className="text-center mt-4 text-sm text-gray-500 dark:text-gray-400">
+          Mostrando {startIndex + 1}-{Math.min(startIndex + itemsPerPage, diplomas.length)} de {diplomas.length}{" "}
+          diplomados
         </div>
       )}
     </motion.div>

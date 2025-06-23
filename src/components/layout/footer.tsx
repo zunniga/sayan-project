@@ -47,7 +47,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
         />
       </div>
       {/* Elementos decorativos de fondo */}
-       <div className="absolute inset-0 opacity-10">
+      <div className="absolute inset-0 opacity-10">
         <div className="absolute top-10 left-10 w-32 h-32 bg-gradient-to-r from-white to-gray-200 rounded-full blur-xl"></div>
         <div className="absolute bottom-20 right-20 w-24 h-24 bg-gradient-to-r from-white to-gray-200 rounded-full blur-lg"></div>
       </div>
@@ -78,7 +78,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
             <div className="space-y-4">
               {country.whatsapp && (
                 <div className="flex items-center gap-3 text-sm">
-                  <Phone className="w-4 h-4 text-[#40C8F8] flex-shrink-0" />
+                  <Phone className="w-4 h-4 text-[#40C8F8] dark:text-[#b6d900] flex-shrink-0" />
                   <a
                     href={`https://wa.me/${country.whatsapp.replace(
                       /[^0-9]/g,
@@ -95,7 +95,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
 
               {country.email && (
                 <div className="flex items-center gap-3 text-sm">
-                  <Mail className="w-4 h-4 text-[#40C8F8] flex-shrink-0" />
+                  <Mail className="w-4 h-4 text-[#40C8F8] dark:text-[#b6d900] flex-shrink-0" />
                   <a
                     href={`mailto:${country.email}`}
                     className="text-gray-600 dark:text-gray-300 hover:text-[#40C8F8] transition-colors duration-300"
@@ -139,7 +139,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
                         ? `/${currentCountryCode}`
                         : `/${currentCountryCode}${route.href}`
                     }
-                    className="text-gray-600 dark:text-gray-300 hover:text-[#40C8F8] transition-colors duration-300 text-sm block"
+                    className="text-gray-600 dark:text-gray-300 hover:text-[#12a9be] dark:hover:text-[#b6d900] transition-colors duration-300 text-sm block"
                   >
                     {route.label}
                   </Link>
@@ -158,7 +158,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
               <li>
                 <Link
                   href={`/${currentCountryCode}/terminos`}
-                  className="text-gray-600 dark:text-gray-300 hover:text-[#40C8F8] transition-colors duration-300 text-sm block"
+                  className="text-gray-600 dark:text-gray-300 hover:text-[#12a9be] dark:hover:text-[#b6d900] transition-colors duration-300 text-sm block"
                 >
                   Términos de servicio
                 </Link>
@@ -166,7 +166,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
               <li>
                 <Link
                   href={`/${currentCountryCode}/privacidad`}
-                  className="text-gray-600 dark:text-gray-300 hover:text-[#40C8F8] transition-colors duration-300 text-sm block"
+                  className="text-gray-600 dark:text-gray-300 hover:text-[#12a9be] dark:hover:text-[#b6d900] transition-colors duration-300 text-sm block"
                 >
                   Política de privacidad
                 </Link>
@@ -174,7 +174,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
               <li>
                 <Link
                   href={`/${currentCountryCode}/cookies`}
-                  className="text-gray-600 dark:text-gray-300 hover:text-[#40C8F8] transition-colors duration-300 text-sm block"
+                  className="text-gray-600 dark:text-gray-300 hover:text-[#12a9be] dark:hover:text-[#b6d900] transition-colors duration-300 text-sm block"
                 >
                   Configuración de Cookies
                 </Link>
@@ -189,9 +189,9 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
             </h3>
 
             {/* Caja destacada para libro de reclamaciones */}
-            <div className="border border-dashed border-[#12a9be] rounded-lg p-6 mb-8">
+            <div className="border border-dashed border-[#12a9be] dark:border-[#b6d900] rounded-lg p-6 mb-8">
               <div className="flex items-center gap-3 mb-4">
-                <FileText className="w-5 h-5 text-[#40C8F8]" />
+                <FileText className="w-5 h-5 text-[#40C8F8] dark:text-[#b6d900]" />
                 <span className="font-semibold text-gray-900 dark:text-white text-sm">
                   Presenta tu reclamo
                 </span>
@@ -201,7 +201,7 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
               </p>
               <Link
                 href={`/${currentCountryCode}/libro-de-reclamaciones`}
-                className="inline-block w-full bg-gradient-to-br from-[#0d617b] to-[#12a9be] hover:bg-[#2C72FF] text-white text-center py-3 px-4 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105"
+                className="inline-block w-full bg-gradient-to-br from-[#0d617b] to-[#12a9be] dark:from-[#b6d900]/50 dark:to-[#b6d900] text-white text-center py-3 px-4 rounded-lg font-semibold text-sm transition-all duration-300 hover:scale-105"
               >
                 Acceder al Libro
               </Link>
@@ -290,7 +290,9 @@ export function Footer({ countryCode = "" }: { countryCode?: string }) {
             <span>
               © {new Date().getFullYear()} - Todos los derechos reservados.
             </span>
-            <span className="font-semibold text-[#40C8F8]">SAYAN</span>
+            <span className="font-semibold text-[#12a9be] dark:text-[#b6d900]">
+              SAYAN
+            </span>
           </div>
 
           {/* Mensaje especial */}

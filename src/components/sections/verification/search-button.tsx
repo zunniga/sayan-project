@@ -19,9 +19,9 @@ export function SearchButton({
       onClick={onClick}
       disabled={disabled || loading}
       className="h-12 px-8 rounded-xl flex-1
-               bg-primary dark:bg-[#12a9be]
+               bg-primary dark:bg-[#b6d900]/75
                hover:opacity-90 text-white dark:text-white
-               shadow-lg shadow-primary/20 dark:shadow-[#12a9be]/20
+               shadow-lg shadow-primary/20 dark:shadow-[#b6d900]/20
                transition-all duration-300
                hover:-translate-y-0.5 hover:shadow-xl
                disabled:opacity-50 disabled:cursor-not-allowed

@@ -16,7 +16,7 @@ export function SearchInput({
     <div className="flex-1 relative">
       <input
         {...props}
-        className={`w-full h-12 px-6 rounded-2xl bg-gray-50 dark:bg-zinc-900/50
+        className={`w-full h-12 px-6 rounded-2xl bg-gray-50 dark:bg-transparent
           border border-gray-400 dark:border-gray-600 
           placeholder-slate-400 dark:placeholder-slate-500
           focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary
