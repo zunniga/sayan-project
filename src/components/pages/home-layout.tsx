@@ -44,18 +44,20 @@ export default function HomeLayout({
       {/* Rest of content with proper spacing */}
       <main className="bg-gradient-to-br from-gray-100 via-gray-100 to-gray-100 dark:from-[#0a0f1c]/90 dark:via-[#0a0f1c]/90 dark:to-[#0a0f1c]/90 pt-16 pb-16 px-4">
         <div className=" max-w-[1200px] mx-auto ">
+          {/* NOSOTROS COMPONENT */}
+          <section className="">
+            <FirstSection />
+          </section>
+          
           <section className="">
             <FeaturedDiplomas
               countryCode={countryCode}
               graduates={featuredDiplomas}
             />
           </section>
-
-          {/* NOSOTROS COMPONENT */}
-          <section className="">
-            <FirstSection />
+          <section>
+            <Testimonials testimonials={testimonials} />
           </section>
-
           <section className="">
             <FeaturedCourses
               countryCode={countryCode}
@@ -63,12 +65,7 @@ export default function HomeLayout({
             />
           </section>
 
-          <section>
-            <Testimonials testimonials={testimonials} />
-          </section>
-
           {/*CONTACTS */}
-
           <section>
             <ContactPage countryCode={countryCode} />
           </section>

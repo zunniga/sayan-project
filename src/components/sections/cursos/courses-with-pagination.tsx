@@ -129,7 +129,7 @@ export function CoursesWithPagination({
         {/* Hero Section - Estructura exacta de la imagen */}
         <div className="relative w-full h-[400px] mb-12  overflow-hidden rounded-2xl">
           <Image
-            src="/peru/diploma/graduate-bg.jpg"
+            src="/peru/course/course-bg.jpg"
             alt="Cursos"
             fill
             className="object-cover"

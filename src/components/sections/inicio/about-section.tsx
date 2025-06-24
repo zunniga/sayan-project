@@ -1,51 +1,14 @@
-"use client";
-import { motion, useInView } from "framer-motion";
-import { useRef, useEffect, useState } from "react";
-import { Users, BookOpen, GraduationCap } from "lucide-react";
-
-
-// Componente Counter animado
-const AnimatedCounter = ({
-  end,
-  duration = 2,
-  isVisible,
-}: {
-  end: number;
-  duration?: number;
-  isVisible: boolean;
-}) => {
-  const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    if (!isVisible) return;
-
-    let startTime: number;
-    let animationFrame: number;
-
-    const animate = (currentTime: number) => {
-      if (!startTime) startTime = currentTime;
-      const progress = Math.min(
-        (currentTime - startTime) / (duration * 1000),
-        1
-      );
-
-      setCount(Math.floor(progress * end));
-
-      if (progress < 1) {
-        animationFrame = requestAnimationFrame(animate);
-      }
-    };
-
-    animationFrame = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(animationFrame);
-  }, [end, duration, isVisible]);
-
-  return <span>{count.toLocaleString()}</span>;
-};
+"use client"
+import { motion, useInView } from "framer-motion"
+import { useRef, useState } from "react"
+import { QrCode, Globe, Eye, Info } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 
 export const FirstSection = () => {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const ref = useRef(null)
+  const isInView = useInView(ref, { once: true, margin: "-100px" })
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   // Animación principal que se ejecuta cuando está en vista
   const waveVariants = {
@@ -62,178 +25,195 @@ export const FirstSection = () => {
         damping: 15,
       },
     }),
-  };
-
+  }
 
   return (
-    <section id="nosotros" className="relative overflow-hidden" ref={ref}>
-     
-      <div className="bg-transparent text-gray-900 relative">
-        {/* Background decorative elements */}
-        <motion.div
-          className="absolute top-20 left-10 w-32 h-32 bg-[#b6d900]/10 rounded-full blur-xl"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
-          transition={{
-            duration: 4,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-10 w-40 h-40 bg-[#12a9be]/20 rounded-full blur-xl"
-          animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.3, 0.2] }}
-          transition={{
-            duration: 5,
-            repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
-            delay: 1,
-          }}
-        />
+    <section id="nosotros" className="relative overflow-hidden bg-transparent" ref={ref}>
+      {/* Background decorative elements */}
+      <motion.div
+        className="absolute top-20 left-10 w-32 h-32 bg-[#b6d900]/10 rounded-full blur-xl"
+        animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
+        transition={{
+          duration: 4,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+        }}
+      />
+      <motion.div
+        className="absolute bottom-20 right-10 w-40 h-40 bg-[#12a9be]/20 rounded-full blur-xl"
+        animate={{ scale: [1, 1.3, 1], opacity: [0.2, 0.3, 0.2] }}
+        transition={{
+          duration: 5,
+          repeat: Number.POSITIVE_INFINITY,
+          ease: "easeInOut",
+          delay: 1,
+        }}
+      />
 
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 lg:py-12 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center">
-            {/* Left Side - Content con animación activada por scroll */}
-            <div className="space-y-6 order-2 lg:order-1">
-              <div className="inline-flex items-center justify-end mb-0">
-                <span className="mx-4 text-white p-2 rounded-2xl font-bold text-sm tracking-[0.2em] uppercase bg-gradient-to-r from-[#12a9be] to-[#12a9be] dark:bg-gradient-to-r dark:from-[#12a9be]/50 dark:to-[#12a9be] shadow-lg transition-transform duration-300 hover:scale-105">
-                  NOSOTROS
-                </span>
-              </div>
-              <motion.h1
-                custom={0}
-                initial="hidden"
-                animate={isInView ? "visible" : "hidden"}
-                variants={waveVariants}
-                className="text-4xl text-center lg:text-left sm:text-5xl lg:text-5xl xl:text-5xl font-bold leading-tight"
-              >
-                <span className="text-gray-900 dark:text-white ">
-                  ¿Por qué debes{" "}
-                </span>
-                <br />
-                <span className="bg-gradient-to-r from-[#12a9be] to-[#0d617b]  bg-clip-text text-transparent">
-                  elegirnos
-                </span>
-                <span className="bg-gradient-to-r from-[#12a9be] to-[#0d617b]  bg-clip-text text-transparent">
-                  ?
-                </span>
-              </motion.h1>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 relative z-10">
+        {/* Header Section */}
+        <div className="text-center mb-16">
+          <motion.div
+            custom={0}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            variants={waveVariants}
+            className="inline-flex items-center justify-center mb-6"
+          >
+            <span className="px-6 py-3 text-white rounded-full font-bold text-sm tracking-[0.2em] uppercase bg-gradient-to-r from-[#0d617b] to-[#12a9be] shadow-lg">
+              NUESTRO CERTIFICADO
+            </span>
+          </motion.div>
 
-              <motion.p
-                custom={1}
-                initial="hidden"
-                animate={isInView ? "visible" : "hidden"}
-                variants={waveVariants}
-                className="text-gray-600 dark:text-gray-300 text-center lg:text-left text-base sm:text-lg leading-relaxed max-w-lg"
-              >
-                En SAYAN, fortalecemos el currículum de titulados con cursos y
-                diplomados en áreas clave como ingenierías, impulsando su
-                desarrollo profesional.
-              </motion.p>
+          <motion.h2
+            custom={1}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            variants={waveVariants}
+            className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 dark:text-white  mb-4"
+          >
+            Lo que hace{" "}
+            <span className="bg-gradient-to-r from-[#12a9be] to-[#0d617b] bg-clip-text text-transparent">único</span>{" "}
+            nuestros certificados
+          </motion.h2>
+        </div>
 
-              {/* Statistics con counters animados */}
-              <motion.div
-                custom={2}
-                initial="hidden"
-                animate={isInView ? "visible" : "hidden"}
-                variants={waveVariants}
-                className="grid grid-cols-1 sm:grid-cols-3 gap-6 pt-6 "
-              >
-                {[
-                  {
-                    icon: Users,
-                    number: 2000,
-                    prefix: "+",
-                    text: "Estudiantes graduados",
-                  },
-                  {
-                    icon: BookOpen,
-                    number: 100,
-                    prefix: "+",
-                    text: "Cursos disponibles",
-                  },
-                  {
-                    icon: GraduationCap,
-                    number: 14,
-                    prefix: "+",
-                    text: "Nuestros diplomados",
-                  },
-                ].map((stat, index) => (
-                  <motion.div
-                    key={index}
-                    custom={2.5 + index * 0.1}
-                    initial="hidden"
-                    animate={isInView ? "visible" : "hidden"}
-                    variants={waveVariants}
-                    className="flex items-center space-x-3 text-center sm:text-left justify-center sm:justify-start"
-                  >
-                    <div className="w-12 h-12 bg-[#12a9be]/10 dark:bg-[#12a9be]/20 rounded-full flex items-center justify-center">
-                      <stat.icon className="w-6 h-6 text-[#12a9be]" />
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold text-[#b6d900]">
-                        {stat.prefix}
-                        <AnimatedCounter
-                          end={stat.number}
-                          duration={2.5}
-                          isVisible={isInView}
-                        />
-                      </div>
-                      <div className="text-sm text-gray-600 dark:text-gray-300">
-                        {stat.text}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </motion.div>
-
-              <motion.div
-                custom={3}
-                initial="hidden"
-                animate={isInView ? "visible" : "hidden"}
-                variants={waveVariants}
-                className="pt-4 flex justify-center lg:justify-start"
-              >
-                <motion.button
-                  className="px-8 py-4 bg-[#0d617b] hover:bg-[#12a9be] dark:bg-[#12a9be] dark:hover:bg-[#0d617b] text-white rounded-lg font-semibold transition-all duration-300 shadow-lg hover:shadow-xl"
-                  whileHover={{ scale: 1.05, y: -2 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  Conoce más
-                </motion.button>
-              </motion.div>
-            </div>
-
-            {/* Right Side - Image con animación activada por scroll */}
+        {/* Main Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+          {/* Left Side - Features */}
+          <div className="space-y-8">
+            {/* QR Code Feature */}
             <motion.div
-              custom={1.5}
+              custom={2}
               initial="hidden"
               animate={isInView ? "visible" : "hidden"}
               variants={waveVariants}
-              className="relative order-1 lg:order-2"
+              className="bg-white/90 dark:bg-slate-900/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-slate-700/50 hover:border-[#12a9be]/50 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer group"
             >
-              <img
-                  src="peru/hero/bg-counter.svg"
-                  alt="Contador"
-                  className="w-full h-full mx-auto"
-                />
-              <motion.div
-                className="absolute bottom-20 left-0 w-12 h-12 bg-[#12a9be]/30 rounded-full"
-                animate={
-                  isInView ? { scale: [1, 1.3, 1], rotate: [360, 180, 0] } : {}
-                }
-                transition={{
-                  duration: 3,
-                  repeat: Number.POSITIVE_INFINITY,
-                  ease: "easeInOut",
-                  delay: 1,
-                }}
-              />
+              <div className="flex items-start space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#12a9be] to-[#0d617b] rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <QrCode className="w-8 h-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                    Certificado con código QR único
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                    Todos nuestros certificados incluyen un código QR único, lo que permite su verificación instantánea
+                    en <span className="text-[#12a9be] font-semibold">VeryCerts</span> garantizando autenticidad.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* International Registry Feature */}
+            <motion.div
+              custom={3}
+              initial="hidden"
+              animate={isInView ? "visible" : "hidden"}
+              variants={waveVariants}
+              className="bg-white/90 dark:bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 dark:border-slate-700/50 hover:border-[#12a9be]/50 hover:shadow-xl hover:scale-105 transition-all duration-300 cursor-pointer group"
+            >
+              <div className="flex items-start space-x-4">
+                <div className="w-16 h-16 bg-gradient-to-br from-[#12a9be] to-[#0d617b] rounded-2xl flex items-center justify-center flex-shrink-0">
+                  <Globe className="w-8 h-8 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
+                    Registro digital internacional
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+                    Tus certificados quedan registrados en una plataforma moderna y segura, lo que aumenta visibilidad
+                    profesional en el entorno laboral actual.
+                  </p>
+                </div>
+              </div>
             </motion.div>
           </div>
+
+          {/* Right Side - Certificate Preview */}
+          <motion.div
+            custom={4}
+            initial="hidden"
+            animate={isInView ? "visible" : "hidden"}
+            variants={waveVariants}
+            className="relative"
+          >
+            <div className="bg-gradient-to-br from-slate-800/80 to-slate-900/80 backdrop-blur-sm rounded-3xl p-8 border border-slate-700/50">
+              {/* Certificate Image */}
+              <div className="relative mb-6 group">
+                <div className="bg-white rounded-2xl p-6 shadow-2xl transform transition-transform duration-300 group-hover:scale-105">
+                  <img
+                    src="/peru/diploma/certificate-model.png"
+                    alt="Modelo de Certificado SAYAN"
+                    className="w-full h-auto rounded-lg"
+                  />
+                </div>
+                {/* Overlay effect */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  onClick={() => setIsDialogOpen(true)}
+                  className="flex-1 bg-gradient-to-r from-[#12a9be] to-[#0d617b] hover:from-[#0d617b] hover:to-[#12a9be] text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  <Eye className="w-5 h-5 mr-2" />
+                  Ver modelo de certificado
+                </Button>
+
+                <Button
+                  variant="outline"
+                  className="flex-1 border-2  bg-gradient-to-r from-[#12a9be] to-[#0d617b] hover:from-[#0d617b] hover:to-[#12a9be] text-whitefont-semibold py-3 px-6 rounded-xl transition-all duration-300"
+                >
+                  <Info className="w-5 h-5 mr-2" />
+                  Más sobre nosotros
+                </Button>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </div>
-    </section>
-  );
-};
 
-export default FirstSection;
+      {/* Certificate Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl w-full max-h-[90vh] overflow-auto bg-slate-900 border-slate-700">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-white mb-4">Modelo de Certificado SAYAN</DialogTitle>
+          </DialogHeader>
+          <div className="relative">
+            <img
+              src="/peru/diploma/certificate-model.png"
+              alt="Modelo completo del Certificado SAYAN"
+              className="w-full h-auto rounded-lg shadow-2xl"
+            />
+            <div className="mt-6 p-4 bg-slate-800/50 rounded-lg border border-slate-700/50">
+              <h4 className="text-lg font-semibold text-white mb-2">Características del certificado:</h4>
+              <ul className="text-gray-300 space-y-2">
+                <li className="flex items-center">
+                  <div className="w-2 h-2 bg-[#12a9be] rounded-full mr-3"></div>
+                  Código QR único para verificación instantánea
+                </li>
+                <li className="flex items-center">
+                  <div className="w-2 h-2 bg-[#b6d900] rounded-full mr-3"></div>
+                  Registro digital internacional
+                </li>
+                <li className="flex items-center">
+                  <div className="w-2 h-2 bg-[#12a9be] rounded-full mr-3"></div>
+                  Firmas digitales autenticadas
+                </li>
+                <li className="flex items-center">
+                  <div className="w-2 h-2 bg-[#b6d900] rounded-full mr-3"></div>
+                  Diseño profesional y moderno
+                </li>
+              </ul>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </section>
+  )
+}
+
+export default FirstSection
